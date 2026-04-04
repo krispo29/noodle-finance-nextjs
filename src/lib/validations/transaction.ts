@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Transaction validation schema
 export const transactionSchema = z.object({
-  type: z.enum(['income', 'expense'], {
+  type: z.enum(['income', 'expense', 'owner_withdrawal', 'owner_topup'], {
     required_error: 'กรุณาเลือกประเภทรายการ',
   }),
   category: z.string({

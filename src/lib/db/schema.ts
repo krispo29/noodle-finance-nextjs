@@ -1,7 +1,12 @@
 import { pgTable, uuid, text, timestamp, numeric, date, pgEnum } from 'drizzle-orm/pg-core';
 
 // Enum for transaction types
-export const transactionTypeEnum = pgEnum('transaction_type', ['income', 'expense']);
+export const transactionTypeEnum = pgEnum('transaction_type', [
+  'income',
+  'expense',
+  'owner_withdrawal',
+  'owner_topup',
+]);
 
 // Users table
 export const users = pgTable('users', {
@@ -10,6 +15,7 @@ export const users = pgTable('users', {
   ownerName: text('owner_name').notNull(),
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
+  dailySalesGoal: numeric('daily_sales_goal', { precision: 10, scale: 2 }),
   createdAt: timestamp('created_at').defaultNow(),
 });
 

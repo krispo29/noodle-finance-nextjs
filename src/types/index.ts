@@ -22,13 +22,45 @@ export interface TransactionInput {
   transactionDate: string;
 }
 
+export interface DashboardAlert {
+  id: string;
+  title: string;
+  message: string;
+  level: 'warning' | 'info';
+}
+
+export interface WeeklyTrendSummary {
+  income: number;
+  expense: number;
+  ownerWithdrawal: number;
+  ownerTopup: number;
+  netProfit: number;
+  averageIngredientExpensePerDay: number;
+}
+
 // Dashboard summary
 export interface DashboardSummary {
   totalIncome: number;
   totalExpense: number;
+  ownerWithdrawal: number;
+  ownerTopup: number;
+  actualCashBalance: number;
   profit: number;
+  dailySalesGoal: number;
+  remainingToGoal: number;
+  goalReached: boolean;
+  currentWeekExpenseTotal: number;
+  previousWeekExpenseTotal: number;
+  currentWeekIngredientExpense: number;
+  previousWeekIngredientExpense: number;
+  currentWeek: WeeklyTrendSummary;
+  previousWeek: WeeklyTrendSummary;
+  weeklyTrendMessage: string;
+  alerts: DashboardAlert[];
   incomeCount: number;
   expenseCount: number;
+  ownerWithdrawalCount: number;
+  ownerTopupCount: number;
   recentTransactions: Transaction[];
 }
 
@@ -36,7 +68,7 @@ export interface DashboardSummary {
 export interface HistoryFilters {
   dateFrom?: string;
   dateTo?: string;
-  type?: 'income' | 'expense' | 'all';
+  type?: TransactionType | 'all';
   category?: string;
 }
 

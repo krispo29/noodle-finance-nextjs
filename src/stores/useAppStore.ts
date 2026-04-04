@@ -1,3 +1,4 @@
+import { TransactionType } from '@/types';
 import { create } from 'zustand';
 
 interface AppState {
@@ -6,8 +7,8 @@ interface AppState {
   setActiveTab: (tab: 'dashboard' | 'add' | 'history' | 'monthly') => void;
 
   // Transaction type toggle (income/expense)
-  transactionType: 'income' | 'expense';
-  setTransactionType: (type: 'income' | 'expense') => void;
+  transactionType: TransactionType;
+  setTransactionType: (type: TransactionType) => void;
 
   // Selected category for transaction
   selectedCategory: string;

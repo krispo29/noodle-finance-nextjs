@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { formatThaiDate, formatThaiDateFull } from '@/lib/utils/formatThaiDate';
 
 interface ThaiDateLabelProps {
@@ -9,46 +9,43 @@ interface ThaiDateLabelProps {
   variant?: 'short' | 'full';
 }
 
+function toDateTimeString(date: Date | string): string {
+  if (typeof date === 'string') {
+    return date;
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 /**
  * Component to display dates in Thai Buddhist Era format
  */
-export default function ThaiDateLabel({ 
-  date, 
+export default function ThaiDateLabel({
+  date,
   className = '',
-  variant = 'short' 
+  variant = 'short',
 }: Readonly<ThaiDateLabelProps>) {
-  const [currentDate, setCurrentDate] = useState<Date | string | undefined>(date);
-  const [mounted, setMounted] = useState(false);
+  const [mountedDate, setMountedDate] = useState<Date | null>(null);
 
   useEffect(() => {
-    setMounted(true);
     if (!date) {
-      setCurrentDate(new Date());
+      setMountedDate(new Date());
     }
   }, [date]);
 
-  // If not mounted and no date provided, return null or a skeleton to avoid mismatch
-  if (!mounted && !date) {
+  if (!date && !mountedDate) {
     return <span className={className}>...</span>;
   }
 
-  const finalDate = currentDate || date || new Date();
-  
-  const formatted = variant === 'full' 
-    ? formatThaiDateFull(finalDate) 
-    : formatThaiDate(finalDate);
-
-  let dateTimeStr: string;
-  if (typeof finalDate === 'string') {
-    dateTimeStr = finalDate;
-  } else if (finalDate instanceof Date) {
-    dateTimeStr = finalDate.toISOString();
-  } else {
-    dateTimeStr = new Date().toISOString();
-  }
+  const finalDate = date ?? mountedDate ?? new Date();
+  const formatted =
+    variant === 'full' ? formatThaiDateFull(finalDate) : formatThaiDate(finalDate);
 
   return (
-    <time dateTime={dateTimeStr} className={className}>
+    <time dateTime={toDateTimeString(finalDate)} className={className}>
       {formatted}
     </time>
   );
