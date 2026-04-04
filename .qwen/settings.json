@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx *)",
+      "Bash(npm init *)",
+      "Bash(curl *)",
+      "Bash(npm uninstall *)"
+    ]
+  },
+  "$version": 3
+}

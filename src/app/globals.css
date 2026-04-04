@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* Brand colors */
+  --color-brand-50: #fef2f2;
+  --color-brand-100: #fee2e2;
+  --color-brand-200: #fecaca;
+  --color-brand-300: #fca5a5;
+  --color-brand-400: #f87171;
+  --color-brand-500: #ef4444;
+  --color-brand-600: #c0392b;
+  --color-brand-700: #a93226;
+  --color-brand-800: #922b21;
+  --color-brand-900: #7b241c;
+
+  /* Income colors */
+  --color-income-bg: var(--income-bg);
+  --color-income-dark: #0d2818;
+
+  /* Expense colors */
+  --color-expense-bg: var(--expense-bg);
+  --color-expense-dark: #2a0e0e;
+
+  /* Surface and Card colors */
+  --color-app-bg: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-surface: var(--surface);
+  --color-surface-dark: #1a1a1a;
+
+  /* Border colors */
+  --color-border: var(--border);
+  --color-border-dark: #2e2e2e;
+
+  /* Fonts */
+  --font-sarabun: 'Sarabun', sans-serif;
+  --font-prompt: 'Prompt', sans-serif;
+
+  /* Corner radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+}
+
+@layer base {
+  :root {
+    --background: #fefcf9;
+    --foreground: #1a1a1a;
+    --card: #ffffff;
+    --card-foreground: #1a1a1a;
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+    --accent: #f5f5f5;
+    --accent-foreground: #1a1a1a;
+    --border: #e8d5c0;
+    --surface: #ffffff;
+    --income-bg: #eaf7ef;
+    --expense-bg: #fdecea;
+  }
+
+  .dark {
+    --background: #0f0f0f;
+    --foreground: #f5f5f5;
+    --card: #232323;
+    --card-foreground: #f5f5f5;
+    --muted: #2a2a2a;
+    --muted-foreground: #a3a3a3;
+    --accent: #2a2a2a;
+    --accent-foreground: #f5f5f5;
+    --border: #2e2e2e;
+    --surface: #1a1a1a;
+    --income-bg: #0d2818;
+    --expense-bg: #2a0e0e;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sarabun), sans-serif;
+  }
+
+  /* Safe area for iPhone notch */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Hide scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Respect user's motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Glass card style */
+  .glass-card {
+    @apply backdrop-blur-md bg-white/70 dark:bg-surface-dark/70;
+  }
+
+  /* Card shadow */
+  .card-shadow {
+    @apply shadow-sm border border-border/50;
+  }
+
+  /* Income card */
+  .income-card {
+    @apply bg-income-bg dark:bg-income-dark border border-emerald-200 dark:border-emerald-900;
+  }
+
+  /* Expense card */
+  .expense-card {
+    @apply bg-expense-bg dark:bg-expense-dark border border-rose-200 dark:border-rose-900;
+  }
+
+  /* Touch target minimum */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+}
+
