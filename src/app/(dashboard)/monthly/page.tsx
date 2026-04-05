@@ -196,7 +196,7 @@ export default function MonthlyPage() {
                   : 'text-rose-700 dark:text-rose-400'
               }`}
             >
-              <CurrencyDisplay amount={report.profit} />
+              <CurrencyDisplay amount={report.profit} showSign />
             </p>
           </div>
         </motion.div>
@@ -394,7 +394,7 @@ export default function MonthlyPage() {
                   <span>
                     กำไร{' '}
                     <span className="font-bold font-prompt">
-                      <CurrencyDisplay amount={report.profit} />
+                      <CurrencyDisplay amount={report.profit} showSign />
                     </span>{' '}
                     ({report.profitMargin}% ของรายได้)
                   </span>

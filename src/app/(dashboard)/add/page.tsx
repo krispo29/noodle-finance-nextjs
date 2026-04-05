@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -44,6 +45,7 @@ const toneClasses = {
 
 export default function AddPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { transactionType, setTransactionType, selectedCategory, setSelectedCategory } =
     useAppStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -102,6 +104,11 @@ export default function AddPage() {
       });
 
       if (result.success) {
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['dashboard', 'summary'] }),
+          queryClient.invalidateQueries({ queryKey: ['transactions', 'history'] }),
+          queryClient.invalidateQueries({ queryKey: ['monthly'] }),
+        ]);
         setIsSuccess(true);
         setTimeout(() => {
           router.push('/');

@@ -328,7 +328,7 @@ export default function DashboardPage() {
                       : 'text-rose-700 dark:text-rose-400'
                   }`}
                 >
-                  <CurrencyDisplay amount={safeSummary.currentWeek.netProfit} />
+                  <CurrencyDisplay amount={safeSummary.currentWeek.netProfit} showSign />
                 </p>
               </div>
             </div>
@@ -468,7 +468,7 @@ export default function DashboardPage() {
                       : 'text-rose-700 dark:text-rose-300'
                   }`}
                 >
-                  <CurrencyDisplay amount={safeSummary.actualCashBalance} />
+                  <CurrencyDisplay amount={safeSummary.actualCashBalance} showSign />
                 </p>
                 <p className="mt-2 text-sm text-muted-foreground">
                   คิดจาก รายรับ + เติมเงินเข้าร้าน - รายจ่ายร้าน - ถอนใช้ส่วนตัว
@@ -488,7 +488,7 @@ export default function DashboardPage() {
                         : 'text-rose-700 dark:text-rose-400'
                     }`}
                   >
-                    <CurrencyDisplay amount={safeSummary.profit} />
+                    <CurrencyDisplay amount={safeSummary.profit} showSign />
                   </p>
                 </div>
 
