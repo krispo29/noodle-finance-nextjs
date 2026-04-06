@@ -89,4 +89,7 @@ export interface MonthlyReport {
 export interface Session {
   userId: string;
   shopName: string;
+  expiresAt: string;
+  expiresIn: number;
+  isAuthenticated: boolean;
 }

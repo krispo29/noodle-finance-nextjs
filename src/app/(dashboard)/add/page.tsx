@@ -23,22 +23,22 @@ type TransactionFormData = z.infer<typeof transactionSchema>;
 const toneClasses = {
   emerald: {
     selected: 'bg-emerald-500 border-emerald-500 text-white shadow-md',
-    button: 'bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-600',
+    button: 'bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-600 text-white',
     badge: 'bg-emerald-50 border-emerald-200 text-emerald-700',
   },
   rose: {
     selected: 'bg-rose-500 border-rose-500 text-white shadow-md',
-    button: 'bg-rose-500 hover:bg-rose-600 active:bg-rose-600',
+    button: 'bg-rose-500 hover:bg-rose-600 active:bg-rose-600 text-white',
     badge: 'bg-rose-50 border-rose-200 text-rose-700',
   },
   amber: {
-    selected: 'bg-amber-500 border-amber-500 text-white shadow-md',
-    button: 'bg-amber-500 hover:bg-amber-600 active:bg-amber-600',
-    badge: 'bg-amber-50 border-amber-200 text-amber-700',
+    selected: 'bg-amber-500 border-amber-500 text-amber-950 shadow-md',
+    button: 'bg-amber-500 hover:bg-amber-600 active:bg-amber-600 text-amber-950',
+    badge: 'bg-amber-50 border-amber-200 text-amber-900',
   },
   sky: {
     selected: 'bg-sky-500 border-sky-500 text-white shadow-md',
-    button: 'bg-sky-500 hover:bg-sky-600 active:bg-sky-600',
+    button: 'bg-sky-500 hover:bg-sky-600 active:bg-sky-600 text-white',
     badge: 'bg-sky-50 border-sky-200 text-sky-700',
   },
 } as const;
@@ -168,7 +168,7 @@ export default function AddPage() {
           <ArrowLeft className="h-6 w-6" />
         </button>
         <div>
-          <h1 className="text-xl font-bold font-prompt">บันทึกรายการ</h1>
+          <h1 className="text-xl font-bold font-prompt ">บันทึกรายการ</h1>
           <p className="text-sm text-muted-foreground">แยกให้ชัดว่าเป็นเงินร้านหรือเงินส่วนตัว</p>
         </div>
       </motion.div>
@@ -362,9 +362,9 @@ export default function AddPage() {
           disabled={isSubmitting || !watchedAmount || !watchedCategory}
           whileHover={{ scale: isSubmitting || !watchedAmount || !watchedCategory ? 1 : 1.01 }}
           whileTap={{ scale: isSubmitting || !watchedAmount || !watchedCategory ? 1 : 0.99 }}
-          className={`touch-target w-full rounded-xl px-6 py-4 text-lg font-bold text-white shadow-md transition-all ${
+          className={`touch-target w-full rounded-xl px-6 py-4 text-lg font-bold shadow-md transition-all ${
             isSubmitting || !watchedAmount || !watchedCategory
-              ? 'cursor-not-allowed bg-muted'
+              ? 'cursor-not-allowed bg-muted text-muted-foreground'
               : `${activeTone.button} hover:shadow-lg`
           }`}
         >

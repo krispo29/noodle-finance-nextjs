@@ -8,7 +8,7 @@ import {
   PlusCircle,
   List,
   BarChart2,
-  LogOut,
+  User,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -17,6 +17,7 @@ const navItems = [
   { label: 'บันทึก', icon: PlusCircle, href: '/add' },
   { label: 'ประวัติ', icon: List, href: '/history' },
   { label: 'รายเดือน', icon: BarChart2, href: '/monthly' },
+  { label: 'โปรไฟล์', icon: User, href: '/profile' },
 ];
 
 /**
@@ -24,7 +25,6 @@ const navItems = [
  */
 export default function BottomNav() {
   const pathname = usePathname();
-  const { logout } = useAuth();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-surface/80 backdrop-blur-lg border-t border-border safe-area-bottom md:hidden">
@@ -70,15 +70,6 @@ export default function BottomNav() {
           );
         })}
       </div>
-      
-      {/* Logout button - top right for mobile */}
-      <button
-        onClick={logout}
-        className="absolute top-2 right-2 p-2 rounded-lg text-muted-foreground hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all touch-target"
-        aria-label="ออกจากระบบ"
-      >
-        <LogOut className="w-5 h-5" />
-      </button>
     </nav>
   );
 }

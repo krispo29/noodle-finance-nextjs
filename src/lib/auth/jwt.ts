@@ -6,11 +6,12 @@ const JWT_SECRET = new TextEncoder().encode(
 );
 
 const COOKIE_NAME = 'token';
-const MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
+export const AUTH_MAX_AGE_SECONDS = 7 * 24 * 60 * 60; // 7 days in seconds
 
 export interface JWTPayload {
   userId: string;
   shopName: string;
+  expiresAt: string;
 }
 
 /**
@@ -20,10 +21,11 @@ export async function signJwt(payload: JWTPayload): Promise<string> {
   const token = await new SignJWT({
     userId: payload.userId,
     shopName: payload.shopName,
+    expiresAt: payload.expiresAt,
   })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime(`${AUTH_MAX_AGE_SECONDS}s`)
     .sign(JWT_SECRET);
 
   return token;
@@ -38,6 +40,10 @@ export async function verifyJwt(token: string): Promise<JWTPayload> {
     return {
       userId: payload.userId as string,
       shopName: payload.shopName as string,
+      expiresAt:
+        typeof payload.expiresAt === 'string'
+          ? payload.expiresAt
+          : new Date(((payload.exp as number) || 0) * 1000).toISOString(),
     };
   } catch (error) {
     throw new Error('Invalid or expired token');
@@ -49,11 +55,13 @@ export async function verifyJwt(token: string): Promise<JWTPayload> {
  */
 export async function setJwtCookie(token: string) {
   const cookieStore = await cookies();
+  const expires = new Date(Date.now() + AUTH_MAX_AGE_SECONDS * 1000);
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: MAX_AGE,
+    maxAge: AUTH_MAX_AGE_SECONDS,
+    expires,
     path: '/',
   });
 }

@@ -40,7 +40,9 @@ export async function middleware(request: NextRequest) {
   } catch {
     // Invalid token, redirect to login
     const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    const response = NextResponse.redirect(loginUrl);
+    response.cookies.delete('token');
+    return response;
   }
 }
 
