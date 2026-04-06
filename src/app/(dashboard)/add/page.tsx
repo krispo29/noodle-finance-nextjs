@@ -22,24 +22,24 @@ type TransactionFormData = z.infer<typeof transactionSchema>;
 
 const toneClasses = {
   emerald: {
-    selected: 'bg-emerald-500 border-emerald-500 text-white shadow-md',
-    button: 'bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-600 text-white',
-    badge: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+    selected: 'bg-apple-blue text-white shadow-lg',
+    button: 'btn-primary',
+    badge: 'bg-apple-blue/10 text-apple-blue',
   },
   rose: {
-    selected: 'bg-rose-500 border-rose-500 text-white shadow-md',
-    button: 'bg-rose-500 hover:bg-rose-600 active:bg-rose-600 text-white',
-    badge: 'bg-rose-50 border-rose-200 text-rose-700',
+    selected: 'bg-near-black text-white dark:bg-white dark:text-near-black shadow-lg',
+    button: 'btn-secondary',
+    badge: 'bg-near-black/5 text-near-black dark:bg-white/10 dark:text-white',
   },
   amber: {
-    selected: 'bg-amber-500 border-amber-500 text-amber-950 shadow-md',
-    button: 'bg-amber-500 hover:bg-amber-600 active:bg-amber-600 text-amber-950',
-    badge: 'bg-amber-50 border-amber-200 text-amber-900',
+    selected: 'bg-near-black text-white dark:bg-white dark:text-near-black shadow-lg',
+    button: 'btn-secondary',
+    badge: 'bg-near-black/5 text-near-black dark:bg-white/10 dark:text-white',
   },
   sky: {
-    selected: 'bg-sky-500 border-sky-500 text-white shadow-md',
-    button: 'bg-sky-500 hover:bg-sky-600 active:bg-sky-600 text-white',
-    badge: 'bg-sky-50 border-sky-200 text-sky-700',
+    selected: 'bg-apple-blue text-white shadow-lg',
+    button: 'btn-primary',
+    badge: 'bg-apple-blue/10 text-apple-blue',
   },
 } as const;
 
@@ -130,7 +130,7 @@ export default function AddPage() {
 
   if (isSuccess) {
     return (
-      <div className="flex min-h-[80vh] items-center justify-center">
+      <div className="flex min-h-[80vh] items-center justify-center bg-background">
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -140,47 +140,43 @@ export default function AddPage() {
           <motion.div
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 0.5 }}
-            className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30"
+            className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-apple-blue/10"
           >
-            <Check className="h-12 w-12 text-emerald-600" />
+            <Check className="h-12 w-12 text-apple-blue" />
           </motion.div>
-          <h2 className="mb-2 text-2xl font-bold font-prompt text-foreground">
-            บันทึกรายการสำเร็จ
+          <h2 className="mb-2 text-[32px] font-bold tracking-tight text-foreground leading-tight">
+            บันทึกเรียบร้อย
           </h2>
-          <p className="text-muted-foreground">กำลังกลับไปหน้าหลัก...</p>
+          <p className="text-[17px] text-muted-foreground font-medium">กำลังพาคุณกลับไปที่หน้าหลัก</p>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 p-4 pb-20">
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="sticky top-0 z-10 flex items-center gap-3 bg-app-bg/80 py-4 backdrop-blur-lg"
-      >
+    <div className="mx-auto max-w-2xl space-y-12 pb-32 pt-8 px-4 md:px-8">
+      {/* Navigation Header */}
+      <section className="space-y-4">
         <button
           onClick={() => router.back()}
-          className="touch-target rounded-lg p-2 transition-colors hover:bg-accent"
-          aria-label="ย้อนกลับ"
+          className="flex items-center gap-2 text-apple-blue font-semibold text-[17px] hover:underline"
         >
-          <ArrowLeft className="h-6 w-6" />
+          <ArrowLeft className="h-5 w-5" />
+          ย้อนกลับ
         </button>
-        <div>
-          <h1 className="text-xl font-bold font-prompt ">บันทึกรายการ</h1>
-          <p className="text-sm text-muted-foreground">แยกให้ชัดว่าเป็นเงินร้านหรือเงินส่วนตัว</p>
-        </div>
-      </motion.div>
+        <h1 className="text-[40px] font-semibold tracking-tight leading-tight text-foreground">
+          บันทึกรายการ
+        </h1>
+        <p className="text-[21px] text-muted-foreground font-medium">
+          คัดกรองทุกรายการให้แม่นยำ <br /> เพื่อสรุปผลกำไรที่แท้จริง
+        </p>
+      </section>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-3"
-        >
-          <label className="block text-sm font-medium text-foreground">ประเภทรายการ</label>
-          <div className="grid grid-cols-2 gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+        {/* Type Selection */}
+        <section className="space-y-4">
+          <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">ประเภทรายการ</label>
+          <div className="grid grid-cols-2 gap-3">
             {TRANSACTION_TYPE_OPTIONS.map((type) => {
               const Icon = type.icon;
               const isSelected = activeType === type.id;
@@ -191,17 +187,17 @@ export default function AddPage() {
                   key={type.id}
                   type="button"
                   onClick={() => onSelectType(type.id)}
-                  className={`rounded-xl border-2 px-4 py-3 text-left transition-all touch-target ${
-                    isSelected
-                      ? typeTone.selected
-                      : 'border-border bg-white text-foreground hover:border-brand-300 dark:bg-card'
+                  className={`apple-card p-4 text-left border border-border/30 transition-all ${
+                    isSelected ? typeTone.selected : 'hover:bg-light-gray dark:hover:bg-near-black'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="h-5 w-5 flex-shrink-0" />
+                    <div className={`p-2 rounded-lg ${isSelected ? 'bg-white/20' : 'bg-background border border-border/20'}`}>
+                      <Icon className="h-5 w-5" />
+                    </div>
                     <div>
-                      <p className="font-semibold">{type.shortLabel}</p>
-                      <p className={`text-xs ${isSelected ? 'text-white/90' : 'text-muted-foreground'}`}>
+                      <p className="font-bold text-[17px] tracking-tight">{type.shortLabel}</p>
+                      <p className={`text-[12px] font-medium tracking-tight ${isSelected ? 'text-white/80' : 'text-muted-foreground'}`}>
                         {type.label}
                       </p>
                     </div>
@@ -210,27 +206,19 @@ export default function AddPage() {
               );
             })}
           </div>
-        </motion.div>
+          
+          <div className={`p-4 rounded-md text-[14px] font-medium leading-relaxed ${activeTone.badge}`}>
+            {activeType === 'owner_withdrawal' && 'ถอนเงินจากร้านไปใช้ส่วนตัว — รายการนี้ไม่นับเป็นรายจ่ายร้านแต่มีผลกับเงินสดในมือ'}
+            {activeType === 'owner_topup' && 'เติมเงินส่วนตัวเข้าร้าน — รายการนี้ไม่นับเป็นรายรับร้านแต่มีผลกับเงินสดในมือ'}
+            {activeType === 'income' && 'รายได้จากการขายของ — รายการนี้จะนำไปรวมคำนวณกำไรของร้าน'}
+            {activeType === 'expense' && 'รายจ่ายเพื่อธุรกิจ (เช่น ค่าแก๊ส, ค่าของ) — รายการนี้จะนำไปหักลบเพื่อหากำไร'}
+          </div>
+        </section>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className={`rounded-xl border px-4 py-3 text-sm ${activeTone.badge}`}
-        >
-          {activeType === 'owner_withdrawal' && 'รายการนี้ใช้เมื่อหยิบเงินจากร้านไปใช้ในบ้านหรือใช้ส่วนตัว'}
-          {activeType === 'owner_topup' && 'รายการนี้ใช้เมื่อเอาเงินส่วนตัวเติมกลับเข้าร้านเพื่อหมุนเงิน'}
-          {activeType === 'income' && 'รายการนี้นับเป็นรายรับของร้านและเอาไปคำนวณกำไร'}
-          {activeType === 'expense' && 'รายการนี้นับเป็นรายจ่ายของร้านและเอาไปคำนวณกำไร'}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
-          <label className="mb-3 block text-sm font-medium text-foreground">หมวดหมู่</label>
-          <div className="grid grid-cols-2 gap-2">
+        {/* Category Selection */}
+        <section className="space-y-4">
+          <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">หมวดหมู่</label>
+          <div className="grid grid-cols-2 gap-3">
             <AnimatePresence mode="wait">
               {categories.map((category, index) => {
                 const Icon = category.icon;
@@ -241,39 +229,33 @@ export default function AddPage() {
                     key={category.id}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.04 }}
+                    transition={{ delay: index * 0.03 }}
                     type="button"
                     onClick={() => {
                       setSelectedCategory(category.id);
                       setValue('category', category.id);
                     }}
-                    className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 transition-all touch-target ${
-                      isSelected
-                        ? activeTone.selected
-                        : 'border-border bg-white hover:border-brand-300 dark:bg-card'
+                    className={`apple-card p-4 flex items-center gap-3 border border-border/30 transition-all ${
+                      isSelected ? activeTone.selected : 'hover:bg-light-gray dark:hover:bg-near-black'
                     }`}
                   >
-                    <Icon className="h-5 w-5 flex-shrink-0" />
-                    <span className="flex-1 text-left text-sm font-medium">{category.label}</span>
-                    {isSelected && <Check className="h-5 w-5" />}
+                    <Icon className="h-5 w-5" />
+                    <span className="font-semibold text-[15px]">{category.label}</span>
                   </motion.button>
                 );
               })}
             </AnimatePresence>
           </div>
           {errors.category && (
-            <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{errors.category.message}</p>
+            <p className="text-[14px] text-rose-600 font-medium">{errors.category.message}</p>
           )}
-        </motion.div>
+        </section>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-        >
-          <label className="mb-3 block text-sm font-medium text-foreground">จำนวนเงิน</label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-prompt text-muted-foreground">
+        {/* Amount Section */}
+        <section className="space-y-4">
+          <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">จำนวนเงิน</label>
+          <div className="relative group">
+            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-[32px] font-bold text-muted-foreground transition-colors group-focus-within:text-apple-blue">
               ฿
             </span>
             <input
@@ -282,101 +264,69 @@ export default function AddPage() {
               {...register('amount', { valueAsNumber: true })}
               placeholder="0"
               disabled={isSubmitting}
-              className={`w-full rounded-xl border bg-white py-6 pl-12 pr-4 text-3xl font-bold font-prompt text-foreground transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-card ${
-                errors.amount ? 'border-rose-500' : 'border-border dark:border-border-dark'
-              } ${isSubmitting ? 'cursor-not-allowed opacity-50' : ''}`}
+              className={`w-full bg-light-gray dark:bg-near-black border-none rounded-2xl py-8 pl-14 pr-6 text-[48px] font-bold tracking-tighter text-foreground focus:ring-4 focus:ring-apple-blue/20 transition-all outline-none ${
+                errors.amount ? 'ring-2 ring-rose-500' : ''
+              }`}
             />
           </div>
-          {errors.amount && (
-            <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{errors.amount.message}</p>
-          )}
-
-          <div className="mt-3 grid grid-cols-4 gap-2">
+          
+          <div className="grid grid-cols-4 gap-2">
             {quickAmounts.map((amount) => (
               <button
                 key={amount}
                 type="button"
-                onClick={() => setValue('amount', amount)}
+                onClick={() => setValue('amount', (watchedAmount || 0) + amount)}
                 disabled={isSubmitting}
-                className="touch-target rounded-lg bg-accent px-2 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent/80 disabled:opacity-50"
+                className="py-3 px-2 rounded-lg bg-light-gray dark:bg-near-black text-[14px] font-bold hover:bg-border/30 transition-colors"
               >
                 +{amount.toLocaleString()}
               </button>
             ))}
           </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <label className="mb-3 block text-sm font-medium text-foreground">หมายเหตุ (ไม่บังคับ)</label>
-          <input
-            type="text"
-            {...register('note')}
-            placeholder="เช่น จ่ายค่าวัตถุดิบเพิ่ม หรือถอนไปซื้อของที่บ้าน"
-            disabled={isSubmitting}
-            className={`w-full rounded-xl border bg-white px-4 py-3 text-foreground transition-all placeholder:text-muted-foreground focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-card ${
-              errors.note ? 'border-rose-500' : 'border-border dark:border-border-dark'
-            } ${isSubmitting ? 'cursor-not-allowed opacity-50' : ''}`}
-          />
-          {errors.note && (
-            <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{errors.note.message}</p>
+          {errors.amount && (
+            <p className="text-[14px] text-rose-600 font-medium">{errors.amount.message}</p>
           )}
-        </motion.div>
+        </section>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-        >
-          <label className="mb-3 block text-sm font-medium text-foreground">วันที่</label>
-          <input
-            type="date"
-            {...register('transactionDate')}
-            disabled={isSubmitting}
-            className={`w-full rounded-xl border bg-white px-4 py-3 text-foreground transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-card ${
-              errors.transactionDate ? 'border-rose-500' : 'border-border dark:border-border-dark'
-            } ${isSubmitting ? 'cursor-not-allowed opacity-50' : ''}`}
-          />
-          {errors.transactionDate && (
-            <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">
-              {errors.transactionDate.message}
-            </p>
-          )}
-        </motion.div>
+        {/* Additional Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <section className="space-y-4">
+            <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">หมายเหตุ</label>
+            <input
+              type="text"
+              {...register('note')}
+              placeholder="บันทึกช่วยจำ (ถ้ามี)"
+              className="w-full apple-card bg-light-gray dark:bg-near-black border-none focus:ring-2 focus:ring-apple-blue outline-none p-4 font-medium text-[17px]"
+            />
+          </section>
+
+          <section className="space-y-4">
+            <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">วันที่</label>
+            <input
+              type="date"
+              {...register('transactionDate')}
+              className="w-full apple-card bg-light-gray dark:bg-near-black border-none focus:ring-2 focus:ring-apple-blue outline-none p-4 font-medium text-[17px]"
+            />
+          </section>
+        </div>
 
         {error && (
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="rounded-xl border border-rose-200 bg-rose-50 p-4 dark:border-rose-800 dark:bg-rose-900/20"
-          >
-            <p className="text-sm text-rose-700 dark:text-rose-300">{error}</p>
-          </motion.div>
+          <div className="p-4 rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-600 font-medium text-center">
+            {error}
+          </div>
         )}
 
-        <motion.button
+        <button
           type="submit"
           disabled={isSubmitting || !watchedAmount || !watchedCategory}
-          whileHover={{ scale: isSubmitting || !watchedAmount || !watchedCategory ? 1 : 1.01 }}
-          whileTap={{ scale: isSubmitting || !watchedAmount || !watchedCategory ? 1 : 0.99 }}
-          className={`touch-target w-full rounded-xl px-6 py-4 text-lg font-bold shadow-md transition-all ${
+          className={`w-full py-5 rounded-2xl text-[21px] font-bold tracking-tight transition-all shadow-xl ${
             isSubmitting || !watchedAmount || !watchedCategory
-              ? 'cursor-not-allowed bg-muted text-muted-foreground'
-              : `${activeTone.button} hover:shadow-lg`
+              ? 'bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+              : `${activeTone.button} hover:scale-[1.02] active:scale-[0.98]`
           }`}
         >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <Loader2 className="h-6 w-6 animate-spin" />
-              กำลังบันทึก...
-            </span>
-          ) : (
-            'บันทึกรายการ'
-          )}
-        </motion.button>
+          {isSubmitting ? 'กำลังบันทึก...' : 'บันทึกรายการ'}
+        </button>
       </form>
     </div>
   );

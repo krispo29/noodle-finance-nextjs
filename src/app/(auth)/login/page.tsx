@@ -63,180 +63,119 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 md:p-8">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-50 via-white to-brand-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        {/* Subtle decorative pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-20 text-6xl">🍜</div>
-          <div className="absolute top-40 right-32 text-4xl">🍜</div>
-          <div className="absolute bottom-32 left-40 text-5xl">🍜</div>
-          <div className="absolute bottom-20 right-20 text-6xl">🍜</div>
-        </div>
-      </div>
-
-      {/* Login card */}
+    <div className="flex min-h-screen items-center justify-center bg-background p-6 md:p-12">
+      {/* Main Container */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.5,
-          ease: 'easeOut',
-        }}
-        className={`relative w-full max-w-md rounded-2xl bg-white/80 dark:bg-surface-dark/80 backdrop-blur-xl border border-border dark:border-border-dark shadow-md p-8 ${
-          serverError ? 'border-rose-500 dark:border-rose-500' : ''
-        }`}
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full max-w-[420px] space-y-10"
       >
-        {/* Header */}
-        <div className="text-center mb-8">
+        {/* Header Section */}
+        <div className="text-center space-y-4">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{
-              delay: 0.2,
-              type: 'spring',
-              stiffness: 200,
-              damping: 15,
-            }}
-            className="text-6xl mb-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-[48px] md:text-[64px]"
           >
             🍜
           </motion.div>
-          <h1 className="text-2xl font-bold font-prompt text-foreground mb-2">
-            บัญชีร้านก๋วยเตี๋ยว
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            ระบบบัญชีสำหรับร้านของคุณ
-          </p>
+          <div className="space-y-1">
+            <h1 className="text-[34px] md:text-[40px] font-semibold tracking-tight leading-tight text-foreground">
+              เข้าสู่ระบบร้าน
+            </h1>
+            <p className="text-[17px] text-muted-foreground font-medium uppercase tracking-widest">
+              Noodle Finance System
+            </p>
+          </div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* Email field */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-foreground mb-2"
-            >
-              อีเมล
-            </label>
-            <input
-              id="email"
-              type="email"
-              {...register('email')}
-              placeholder="your@email.com"
-              disabled={isLoading}
-              className={`w-full px-4 py-3 rounded-lg border bg-white/50 dark:bg-surface/50 text-foreground placeholder-muted-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
-                errors.email
-                  ? 'border-rose-500'
-                  : 'border-border dark:border-border-dark'
-              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            />
-            {errors.email && (
-              <motion.p
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="mt-2 text-sm text-rose-600 dark:text-rose-400"
-              >
-                {errors.email.message}
-              </motion.p>
-            )}
-          </div>
-
-          {/* Password field */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-foreground mb-2"
-            >
-              รหัสผ่าน
-            </label>
-            <div className="relative">
+        {/* Login Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            {/* Email Field */}
+            <div className="space-y-2">
               <input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                {...register('password')}
-                placeholder="••••••••"
+                id="email"
+                type="email"
+                {...register('email')}
+                placeholder="Apple ID (Email)"
                 disabled={isLoading}
-                className={`w-full px-4 py-3 pr-12 rounded-lg border bg-white/50 dark:bg-surface/50 text-foreground placeholder-muted-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent ${
-                  errors.password
-                    ? 'border-rose-500'
-                    : 'border-border dark:border-border-dark'
-                } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full bg-light-gray dark:bg-near-black border-none rounded-2xl py-4 px-6 text-[17px] font-medium text-foreground focus:ring-4 focus:ring-apple-blue/20 transition-all outline-none placeholder:text-muted-foreground ${
+                  errors.email ? 'ring-2 ring-rose-500' : ''
+                }`}
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors touch-target flex items-center justify-center"
-                disabled={isLoading}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
-              </button>
+              {errors.email && (
+                <p className="text-[14px] text-rose-600 font-medium px-2">{errors.email.message}</p>
+              )}
             </div>
-            {errors.password && (
-              <motion.p
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="mt-2 text-sm text-rose-600 dark:text-rose-400"
-              >
-                {errors.password.message}
-              </motion.p>
-            )}
+
+            {/* Password Field */}
+            <div className="space-y-2">
+              <div className="relative group">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password')}
+                  placeholder="Password"
+                  disabled={isLoading}
+                  className={`w-full bg-light-gray dark:bg-near-black border-none rounded-2xl py-4 px-6 pr-14 text-[17px] font-medium text-foreground focus:ring-4 focus:ring-apple-blue/20 transition-all outline-none placeholder:text-muted-foreground ${
+                    errors.password ? 'ring-2 ring-rose-500' : ''
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-[14px] text-rose-600 font-medium px-2">{errors.password.message}</p>
+              )}
+            </div>
           </div>
 
-          {/* Error message */}
+          {/* Error Message */}
           {serverError && (
             <motion.div
               initial={{ opacity: 0, x: -10 }}
-              animate={{
-                opacity: 1,
-                x: 0,
-                transition: {
-                  type: 'spring',
-                  stiffness: 300,
-                  damping: 20,
-                },
-              }}
-              className="p-4 rounded-lg bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800"
+              animate={{ opacity: 1, x: 0 }}
+              className="p-4 rounded-xl bg-rose-50 dark:bg-rose-900/10 text-rose-600 text-sm font-medium text-center border border-rose-200 dark:border-rose-900/20"
             >
-              <p className="text-sm text-rose-700 dark:text-rose-300">
-                {serverError}
-              </p>
+              {serverError}
             </motion.div>
           )}
 
-          {/* Submit button */}
-          <motion.button
-            type="submit"
-            disabled={isLoading}
-            whileHover={{ scale: isLoading ? 1 : 1.01 }}
-            whileTap={{ scale: isLoading ? 1 : 0.99 }}
-            className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-200 touch-target ${
-              isLoading
-                ? 'bg-brand-400 cursor-not-allowed'
-                : 'bg-brand-600 hover:bg-brand-700 active:bg-brand-700 shadow-md hover:shadow-lg'
-            }`}
-          >
-            {isLoading ? (
-              <span className="flex items-center justify-center gap-2">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                กำลังเข้าสู่ระบบ...
-              </span>
-            ) : (
-              'เข้าสู่ระบบ'
-            )}
-          </motion.button>
+          {/* Submit Button */}
+          <div className="pt-4">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-4 rounded-full text-[17px] font-bold tracking-tight transition-all shadow-xl ${
+                isLoading
+                  ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                  : 'bg-apple-blue hover:bg-apple-blue/90 text-white active:scale-[0.98]'
+              }`}
+            >
+              {isLoading ? 'กำลังเข้าสู่ระบบ...' : 'ลงชื่อเข้าใช้'}
+            </button>
+          </div>
         </form>
 
-        {/* Footer text */}
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          ระบบบัญชีสำหรับร้านก๋วยเตี๋ยว
-        </p>
+        {/* Footer */}
+        <div className="text-center pt-8 space-y-4">
+           <p className="text-[14px] font-medium text-muted-foreground">
+             ลืมรหัสผ่าน? ติดตามความช่วยเหลือได้ที่นี่
+           </p>
+           <div className="flex items-center justify-center gap-4 text-[12px] font-semibold text-muted-foreground/60 uppercase tracking-widest">
+             <span>Privacy</span>
+             <span>Terms</span>
+             <span>Support</span>
+           </div>
+        </div>
       </motion.div>
     </div>
   );

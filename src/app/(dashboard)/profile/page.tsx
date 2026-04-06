@@ -17,109 +17,99 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-4 pb-24">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="flex items-center justify-between py-4"
-      >
-        <div>
-          <h1 className="text-xl font-bold font-prompt">โปรไฟล์</h1>
-          <p className="text-sm text-muted-foreground">จัดการบัญชีและตั้งค่าการใช้งาน</p>
+    <div className="mx-auto max-w-4xl space-y-12 pb-32 pt-8 px-4 md:px-8">
+      {/* Header Section */}
+      <section className="space-y-2">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[12px] font-semibold text-muted-foreground uppercase tracking-widest">Account Settings</span>
+          <ThemeToggle />
         </div>
-      </motion.div>
+        <h1 className="text-[40px] md:text-[56px] font-semibold tracking-tight leading-tight text-foreground">
+          โปรไฟล์
+        </h1>
+        <p className="text-[21px] text-muted-foreground font-medium max-w-lg leading-snug">
+          จัดการข้อมูลร้านค้า <br className="hidden md:block" />
+          และปรับแต่งการใช้งานส่วนตัว
+        </p>
+      </section>
 
       {/* User Info Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="rounded-2xl bg-white p-6 shadow-sm border border-border dark:bg-card overflow-hidden relative"
+        className="apple-card p-8 flex flex-col md:flex-row items-center gap-8 bg-light-gray/50 dark:bg-near-black/50"
       >
-        <div className="absolute top-0 left-0 w-2 h-full bg-brand-600" />
-        <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-900/20">
-            <User className="h-8 w-8" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold font-prompt truncate">
-              {user?.shopName || 'ก๋วยเตี๋ยวรสเด็ด'}
-            </h2>
-            <p className="text-sm text-muted-foreground">บัญชีร้านค้า</p>
-          </div>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-apple-blue text-white shadow-xl">
+          <User className="h-12 w-12" />
+        </div>
+        <div className="text-center md:text-left space-y-1">
+          <h2 className="text-[32px] font-bold tracking-tight text-foreground leading-tight">
+            {user?.shopName || 'ก๋วยเตี๋ยวรสเด็ด'}
+          </h2>
+          <p className="text-[17px] text-muted-foreground font-medium uppercase tracking-tight">บัญชีเจ้าของร้าน</p>
         </div>
       </motion.div>
 
       {/* Options List */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="rounded-2xl bg-white shadow-sm border border-border dark:bg-card overflow-hidden"
-      >
+      <section className="space-y-6">
         {/* Appearance Section */}
-        <div className="p-4 border-b border-border">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 px-2">
-            การแสดงผล
-          </h3>
-          <div className="flex items-center justify-between px-2 py-2">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
-                {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-              </div>
-              <span className="font-medium">โหมดมืด</span>
-            </div>
-            <ThemeToggle />
+        <div className="space-y-4">
+           <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">การแสดงผล</label>
+           <div className="apple-card divide-y divide-border/20 border border-border/10 p-0 overflow-hidden">
+             <div className="flex items-center justify-between px-6 py-4 hover:bg-light-gray/30 dark:hover:bg-near-black/30 transition-colors">
+               <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-lg bg-background border border-border/30">
+                    {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                  </div>
+                  <span className="text-[17px] font-semibold">โหมดมืด</span>
+               </div>
+               <ThemeToggle />
+             </div>
+           </div>
+        </div>
+
+        {/* Account Settings Section */}
+        <div className="space-y-4">
+          <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">บัญชี</label>
+          <div className="apple-card divide-y divide-border/20 border border-border/10 p-0 overflow-hidden">
+             <button className="flex w-full items-center justify-between px-6 py-4 hover:bg-light-gray/30 dark:hover:bg-near-black/30 transition-colors group">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-lg bg-background border border-border/30">
+                    <Store className="h-5 w-5" />
+                  </div>
+                  <span className="text-[17px] font-semibold">ข้อมูลร้านค้า</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+             </button>
+             <button className="flex w-full items-center justify-between px-6 py-4 hover:bg-light-gray/30 dark:hover:bg-near-black/30 transition-colors group">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-lg bg-background border border-border/30">
+                    <Shield className="h-5 w-5" />
+                  </div>
+                  <span className="text-[17px] font-semibold">ความปลอดภัย</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+             </button>
           </div>
         </div>
 
-        {/* Account Section */}
-        <div className="p-4 border-b border-border">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 px-2">
-            บัญชี
-          </h3>
-          <div className="space-y-1">
-            <button className="flex w-full items-center justify-between rounded-xl px-2 py-3 transition hover:bg-accent group">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/20">
-                  <Store className="h-5 w-5" />
-                </div>
-                <span className="font-medium">ข้อมูลร้านค้า</span>
-              </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="flex w-full items-center justify-between rounded-xl px-2 py-3 transition hover:bg-accent group">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/20">
-                  <Shield className="h-5 w-5" />
-                </div>
-                <span className="font-medium">ความลับและความปลอดภัย</span>
-              </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-        </div>
-
-        {/* Logout Section */}
-        <div className="p-4">
-          <button
+        {/* Danger Zone */}
+        <div className="pt-6">
+           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-2 py-3 transition hover:bg-rose-50 text-rose-600 dark:hover:bg-rose-900/20 group"
+            className="w-full apple-card bg-rose-50 dark:bg-rose-900/10 hover:bg-rose-100 dark:hover:bg-rose-900/20 text-rose-600 font-bold text-[17px] flex items-center justify-center gap-3 transition-all border border-rose-200 dark:border-rose-900/30"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-900/20 group-hover:scale-110 transition-transform">
-              <LogOut className="h-5 w-5" />
-            </div>
-            <span className="font-medium">ออกจากระบบ</span>
+            <LogOut className="h-5 w-5" />
+            ออกจากระบบ
           </button>
         </div>
-      </motion.div>
+      </section>
 
       {/* Version Info */}
-      <div className="text-center py-6">
-        <p className="text-xs text-muted-foreground">Noodle Finance v1.0.0</p>
-        <p className="text-[10px] text-muted-foreground/60 mt-1">Made with 🍜 for Street Food Heroes</p>
-      </div>
+      <footer className="text-center pt-12">
+        <p className="text-[14px] font-semibold text-muted-foreground tracking-tight uppercase">Noodle Finance v1.0.0</p>
+        <p className="text-[12px] text-muted-foreground/60 mt-1 font-medium">Made with 🍜 for Street Food Heroes</p>
+      </footer>
     </div>
   );
 }

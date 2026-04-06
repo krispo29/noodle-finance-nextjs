@@ -22,7 +22,7 @@ export default function CurrencyDisplay({
   return (
     <span className={className}>
       {showSign && (
-        <span className={isPositive ? 'text-emerald-600' : 'text-rose-600'}>
+        <span className={isPositive ? 'text-apple-blue dark:text-bright-blue' : 'text-rose-600'}>
           {isPositive ? '+' : '-'}
         </span>
       )}

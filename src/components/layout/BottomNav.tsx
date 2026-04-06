@@ -27,7 +27,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-surface/80 backdrop-blur-lg border-t border-border safe-area-bottom md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-border/50 safe-area-bottom md:hidden">
       <div className="flex items-center justify-around h-16">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -39,28 +39,17 @@ export default function BottomNav() {
               href={item.href}
               className="relative flex flex-col items-center justify-center flex-1 h-full min-w-[64px]"
             >
-              {isActive && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute top-2 w-1.5 h-1.5 bg-brand-600 rounded-full"
-                  transition={{
-                    type: 'spring',
-                    stiffness: 500,
-                    damping: 35,
-                  }}
-                />
-              )}
               <Icon
                 className={`w-6 h-6 transition-colors ${
                   isActive
-                    ? 'text-brand-600'
+                    ? 'text-apple-blue dark:text-bright-blue'
                     : 'text-muted-foreground'
                 }`}
               />
               <span
-                className={`text-xs mt-1 transition-colors ${
+                className={`text-[10px] mt-1 transition-colors font-medium tracking-tight ${
                   isActive
-                    ? 'text-brand-600 font-medium'
+                    ? 'text-apple-blue dark:text-bright-blue'
                     : 'text-muted-foreground'
                 }`}
               >

@@ -120,182 +120,173 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-4 pb-20">
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="sticky top-0 z-10 flex items-center justify-between bg-app-bg/80 py-4 backdrop-blur-lg"
-      >
-        <div>
-          <h1 className="text-xl font-bold font-prompt">ประวัติรายการ</h1>
-          <p className="text-sm text-muted-foreground">ดูย้อนหลังได้ครบทั้งเงินร้านและเงินที่ถอนใช้</p>
+    <div className="mx-auto max-w-4xl space-y-10 pb-32 pt-8 px-4 md:px-8">
+      {/* Header Section */}
+      <section className="space-y-2">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[12px] font-semibold text-muted-foreground uppercase tracking-widest">Transaction History</span>
+          <ThemeToggle />
         </div>
-        <ThemeToggle />
-      </motion.div>
+        <h1 className="text-[40px] md:text-[56px] font-semibold tracking-tight leading-tight text-foreground">
+          ประวัติรายการ
+        </h1>
+        <p className="text-[21px] text-muted-foreground font-medium max-w-lg leading-snug">
+          ตรวจสอบทุกความเคลื่อนไหว <br className="hidden md:block" />
+          เพื่อความโปร่งใสของธุรกิจคุณ
+        </p>
+      </section>
 
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="space-y-3"
-      >
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {filterPresets.map((preset, index) => (
-            <button
-              key={preset.label}
-              onClick={() => setActiveFilter(index)}
-              className={`touch-target whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                activeFilter === index
-                  ? 'bg-brand-600 text-white shadow-md'
-                  : 'bg-accent text-muted-foreground hover:bg-accent/80'
-              }`}
-            >
-              {preset.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          <button
-            onClick={() => setTypeFilter('all')}
-            className={`touch-target rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-              typeFilter === 'all'
-                ? 'bg-brand-600 text-white shadow-md'
-                : 'bg-accent text-muted-foreground hover:bg-accent/80'
-            }`}
-          >
-            ทั้งหมด
-          </button>
-          {TRANSACTION_TYPE_OPTIONS.map((type) => (
-            <button
-              key={type.id}
-              onClick={() => setTypeFilter(type.id)}
-              className={`touch-target rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                typeFilter === type.id
-                  ? type.tone === 'emerald'
-                    ? 'bg-emerald-500 text-white shadow-md'
-                    : type.tone === 'rose'
-                    ? 'bg-rose-500 text-white shadow-md'
-                    : type.tone === 'amber'
-                    ? 'bg-amber-500 text-white shadow-md'
-                    : 'bg-sky-500 text-white shadow-md'
-                  : 'bg-accent text-muted-foreground hover:bg-accent/80'
-              }`}
-            >
-              {type.shortLabel}
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {isLoading ? (
-        <div className="space-y-4">
-          <div className="h-8 rounded bg-accent animate-pulse" />
-          <div className="space-y-2">
-            {[1, 2, 3].map((index) => (
-              <div key={index} className="h-16 rounded bg-accent animate-pulse" />
+      {/* Filters Section */}
+      <section className="space-y-6">
+        <div className="space-y-3">
+           <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">ช่วงเวลา</label>
+           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {filterPresets.map((preset, index) => (
+              <button
+                key={preset.label}
+                onClick={() => setActiveFilter(index)}
+                className={`whitespace-nowrap rounded-full px-6 py-2 text-[15px] font-semibold transition-all ${
+                  activeFilter === index
+                    ? 'bg-apple-blue text-white shadow-md'
+                    : 'bg-light-gray text-muted-foreground dark:bg-near-black hover:bg-border/30'
+                }`}
+              >
+                {preset.label}
+              </button>
             ))}
           </div>
         </div>
-      ) : Object.keys(groupedByDate).length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="py-16 text-center text-muted-foreground"
-        >
-          <div className="mb-4 text-6xl">📋</div>
-          <p className="text-lg font-medium">ไม่พบรายการในช่วงนี้</p>
-          <p className="mt-2 text-sm">ลองเปลี่ยนช่วงเวลาหรือประเภทที่กรองไว้</p>
-        </motion.div>
-      ) : (
-        <div className="space-y-4">
-          <AnimatePresence>
-            {Object.entries(groupedByDate).map(([date, dateTransactions]) => (
-              <motion.div
-                key={date}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+
+        <div className="space-y-3">
+          <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">ประเภท</label>
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            <button
+              onClick={() => setTypeFilter('all')}
+              className={`rounded-full px-6 py-2 text-[15px] font-semibold transition-all ${
+                typeFilter === 'all'
+                  ? 'bg-near-black text-white dark:bg-white dark:text-near-black shadow-md'
+                  : 'bg-light-gray text-muted-foreground dark:bg-near-black hover:bg-border/30'
+              }`}
+            >
+              ทั้งหมด
+            </button>
+            {TRANSACTION_TYPE_OPTIONS.map((type) => (
+              <button
+                key={type.id}
+                onClick={() => setTypeFilter(type.id)}
+                className={`rounded-full px-6 py-2 text-[15px] font-semibold transition-all ${
+                  typeFilter === type.id
+                    ? type.tone === 'emerald' || type.tone === 'sky'
+                      ? 'bg-apple-blue text-white shadow-md'
+                      : 'bg-near-black text-white dark:bg-white dark:text-near-black shadow-md'
+                    : 'bg-light-gray text-muted-foreground dark:bg-near-black hover:bg-border/30'
+                }`}
               >
-                <div className="sticky top-20 z-10 mb-2 flex items-center justify-between rounded-lg bg-app-bg/90 px-3 py-2 backdrop-blur-sm">
-                  <ThaiDateLabel date={date} className="text-sm font-semibold" />
-                  <div className="text-xs text-muted-foreground">{dateTransactions.length} รายการ</div>
-                </div>
-
-                <div className="space-y-2">
-                  {dateTransactions.map((transaction) => {
-                    const isDeleted = deletedTransactions.some((dt) => dt.id === transaction.id);
-                    const meta = getTransactionTypeMeta(transaction.type);
-                    const Icon = meta.icon;
-                    const signedAmount =
-                      transaction.type === 'income' || transaction.type === 'owner_topup'
-                        ? Number(transaction.amount)
-                        : -Number(transaction.amount);
-
-                    return (
-                      <motion.div
-                        key={transaction.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{
-                          opacity: isDeleted ? 0 : 1,
-                          x: isDeleted ? 100 : 0,
-                        }}
-                        exit={{ opacity: 0, x: 100 }}
-                        transition={{ duration: 0.2 }}
-                        className="group flex items-center gap-3 rounded-xl border border-border bg-white p-3 card-shadow dark:bg-card"
-                      >
-                        <div
-                          className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${toneMap[meta.tone]}`}
-                        >
-                          <Icon className="h-5 w-5" />
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <p className="truncate font-medium text-foreground">{transaction.category}</p>
-                            <span className="rounded-full bg-accent px-2 py-0.5 text-[11px] text-muted-foreground">
-                              {meta.shortLabel}
-                            </span>
-                          </div>
-                          {transaction.note && (
-                            <p className="truncate text-xs text-muted-foreground">{transaction.note}</p>
-                          )}
-                        </div>
-
-                        <div className="flex-shrink-0 text-right">
-                          <p className="font-bold font-prompt">
-                            <CurrencyDisplay amount={signedAmount} showSign />
-                          </p>
-                        </div>
-
-                        {!isDeleted && (
-                          <button
-                            onClick={() => handleDelete(transaction)}
-                            className="touch-target rounded-lg p-2 text-muted-foreground opacity-0 transition-all hover:bg-rose-50 hover:text-rose-600 group-hover:opacity-100 md:opacity-100 dark:hover:bg-rose-900/20"
-                            aria-label="ลบ"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        )}
-
-                        {isDeleted && (
-                          <button
-                            onClick={() => handleUndoDelete(transaction)}
-                            className="touch-target rounded-lg p-2 text-brand-600 transition-all hover:bg-brand-50 dark:hover:bg-brand-900/20"
-                            aria-label="ยกเลิก"
-                          >
-                            <Undo2 className="h-4 w-4" />
-                          </button>
-                        )}
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </motion.div>
+                {type.shortLabel}
+              </button>
             ))}
-          </AnimatePresence>
+          </div>
         </div>
-      )}
+      </section>
+
+      {/* Transactions List */}
+      <section className="space-y-8">
+        {isLoading ? (
+          <div className="space-y-8 animate-pulse">
+            {[1, 2].map((i) => (
+              <div key={i} className="space-y-4">
+                <div className="h-4 w-32 bg-light-gray dark:bg-near-black rounded" />
+                <div className="space-y-2">
+                  {[1, 2, 3].map((j) => (
+                    <div key={j} className="h-20 w-full bg-light-gray dark:bg-near-black rounded-xl" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : Object.keys(groupedByDate).length === 0 ? (
+          <div className="apple-card py-24 text-center text-muted-foreground border border-dashed border-border/50">
+             <div className="text-[48px] mb-4">📋</div>
+             <p className="text-[21px] font-bold tracking-tight mb-2">ไม่พบรายการ</p>
+             <p className="text-[17px] font-medium">ลองเปลี่ยนช่วงเวลาหรือประเภทที่กรองไว้</p>
+          </div>
+        ) : (
+          <div className="space-y-12">
+            <AnimatePresence>
+              {Object.entries(groupedByDate).map(([date, dateTransactions]) => (
+                <motion.div
+                  key={date}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
+                >
+                  <div className="flex items-center justify-between border-b border-border/30 pb-2">
+                    <ThaiDateLabel date={date} className="text-[17px] font-bold tracking-tight" />
+                    <span className="text-[14px] font-medium text-muted-foreground">{dateTransactions.length} รายการ</span>
+                  </div>
+
+                  <div className="space-y-3">
+                    {dateTransactions.map((tx) => {
+                      const isDeleted = deletedTransactions.some((dt) => dt.id === tx.id);
+                      const meta = getTransactionTypeMeta(tx.type);
+                      const Icon = meta.icon;
+                      const isPlus = tx.type === 'income' || tx.type === 'owner_topup';
+                      const amount = isPlus ? Number(tx.amount) : -Number(tx.amount);
+
+                      return (
+                        <motion.div
+                          key={tx.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: isDeleted ? 0.3 : 1, x: 0 }}
+                          className="apple-card p-4 group flex items-center gap-4 hover:apple-shadow border border-border/10"
+                        >
+                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-background border border-border/30">
+                            <Icon className="h-5 w-5 text-muted-foreground" />
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="text-[17px] font-semibold text-foreground truncate">{tx.category}</p>
+                              <span className="text-[11px] font-bold uppercase tracking-tight text-muted-foreground bg-light-gray dark:bg-near-black px-2 py-0.5 rounded">
+                                {meta.shortLabel}
+                              </span>
+                            </div>
+                            <p className="text-[14px] text-muted-foreground font-medium truncate">
+                              {tx.note || 'ไม่มีหมายเหตุ'}
+                            </p>
+                          </div>
+
+                          <div className="text-right mr-2">
+                            <p className={`text-[17px] font-bold tracking-tight ${isPlus ? 'text-apple-blue dark:text-bright-blue' : 'text-foreground'}`}>
+                              <CurrencyDisplay amount={amount} showSign />
+                            </p>
+                          </div>
+
+                          {!isDeleted ? (
+                            <button
+                              onClick={() => handleDelete(tx)}
+                              className="p-2 rounded-full text-muted-foreground hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-900/20 transition-all opacity-0 group-hover:opacity-100"
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleUndoDelete(tx)}
+                              className="p-2 rounded-full text-apple-blue hover:bg-apple-blue/10"
+                            >
+                              <Undo2 className="h-5 w-5" />
+                            </button>
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
