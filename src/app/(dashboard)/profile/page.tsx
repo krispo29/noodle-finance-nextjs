@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { LogOut, User, Store, Shield, ChevronRight, Moon, Sun } from 'lucide-react';
+import Link from 'next/link';
+import { LogOut, User, Store, Shield, ChevronRight, Moon, Sun, Tags } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import ThemeToggle from '@/components/shared/ThemeToggle';
 import { useTheme } from 'next-themes';
@@ -50,6 +51,24 @@ export default function ProfilePage() {
         </div>
       </motion.div>
 
+      <Link
+        href="/profile/categories"
+        className="apple-card flex items-center justify-between gap-4 bg-apple-blue text-white hover:opacity-95"
+      >
+        <div className="space-y-1">
+          <p className="text-[12px] font-semibold uppercase tracking-widest text-white/70">
+            Quick access
+          </p>
+          <p className="text-[24px] font-bold tracking-tight">จัดการหมวดหมู่รายการ</p>
+          <p className="text-[15px] font-medium text-white/80">
+            เพิ่ม แก้ไข ปิดใช้งาน หรือลบหมวดหมู่ได้จากหน้านี้
+          </p>
+        </div>
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white/15">
+          <Tags className="h-6 w-6" />
+        </div>
+      </Link>
+
       {/* Options List */}
       <section className="space-y-6">
         {/* Appearance Section */}
@@ -81,6 +100,18 @@ export default function ProfilePage() {
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
              </button>
+             <Link
+              href="/profile/categories"
+              className="flex w-full items-center justify-between px-6 py-4 hover:bg-light-gray/30 dark:hover:bg-near-black/30 transition-colors group"
+             >
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-lg bg-background border border-border/30">
+                    <Tags className="h-5 w-5" />
+                  </div>
+                  <span className="text-[17px] font-semibold">จัดการหมวดหมู่</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+             </Link>
              <button className="flex w-full items-center justify-between px-6 py-4 hover:bg-light-gray/30 dark:hover:bg-near-black/30 transition-colors group">
                 <div className="flex items-center gap-4">
                   <div className="p-2 rounded-lg bg-background border border-border/30">

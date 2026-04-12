@@ -1,7 +1,7 @@
 'use server';
 
 import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
-import { format, subDays } from 'date-fns';
+import { addDays, format, subDays } from 'date-fns';
 import { revalidatePath } from 'next/cache';
 import { db } from '@/lib/db';
 import { transactions, users } from '@/lib/db/schema';
@@ -77,6 +77,10 @@ function emptyDashboardSummary(): DashboardSummary {
     previousWeekExpenseTotal: 0,
     currentWeekIngredientExpense: 0,
     previousWeekIngredientExpense: 0,
+    currentWeekProfitMargin: 0,
+    previousWeekProfitMargin: 0,
+    currentWeekIngredientShare: 0,
+    currentWeekIngredientCostRate: 0,
     currentWeek: {
       income: 0,
       expense: 0,
@@ -93,6 +97,9 @@ function emptyDashboardSummary(): DashboardSummary {
       netProfit: 0,
       averageIngredientExpensePerDay: 0,
     },
+    dailySummaries: [],
+    expenseByCategory: [],
+    topExpenseCategory: { category: '', total: 0, count: 0, percentage: 0 },
     weeklyTrendMessage: '',
     alerts: [],
     incomeCount: 0,
@@ -238,6 +245,39 @@ export async function getDashboardSummary(date: string): Promise<DashboardSummar
         )
       );
 
+    const currentWeekDailyRows = await db
+      .select({
+        date: transactions.transactionDate,
+        type: transactions.type,
+        total: sql<number>`COALESCE(SUM(CAST(amount AS FLOAT)), 0)`,
+      })
+      .from(transactions)
+      .where(
+        and(
+          eq(transactions.userId, user.userId),
+          gte(transactions.transactionDate, currentWeekStart),
+          lte(transactions.transactionDate, date)
+        )
+      )
+      .groupBy(transactions.transactionDate, transactions.type);
+
+    const currentWeekExpenseByCategoryRows = await db
+      .select({
+        category: transactions.category,
+        total: sql<number>`COALESCE(SUM(CAST(amount AS FLOAT)), 0)`,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(transactions)
+      .where(
+        and(
+          eq(transactions.userId, user.userId),
+          eq(transactions.type, 'expense'),
+          gte(transactions.transactionDate, currentWeekStart),
+          lte(transactions.transactionDate, date)
+        )
+      )
+      .groupBy(transactions.category);
+
     const totalsByType = summaryRows.reduce<Record<string, { total: number; count: number }>>(
       (acc, row) => {
         acc[row.type] = {
@@ -284,6 +324,54 @@ export async function getDashboardSummary(date: string): Promise<DashboardSummar
       netProfit: (previousWeekByType.income || 0) - (previousWeekByType.expense || 0),
       averageIngredientExpensePerDay: previousWeekIngredientExpense / 7,
     };
+    const currentWeekProfitMargin =
+      currentWeek.income > 0 ? Math.round((currentWeek.netProfit / currentWeek.income) * 100) : 0;
+    const previousWeekProfitMargin =
+      previousWeek.income > 0 ? Math.round((previousWeek.netProfit / previousWeek.income) * 100) : 0;
+    const currentWeekIngredientShare =
+      currentWeekExpenseTotal > 0
+        ? Math.round((currentWeekIngredientExpense / currentWeekExpenseTotal) * 100)
+        : 0;
+    const currentWeekIngredientCostRate =
+      currentWeek.income > 0 ? Math.round((currentWeekIngredientExpense / currentWeek.income) * 100) : 0;
+    const dailySummaryMap = currentWeekDailyRows.reduce<
+      Record<string, { income: number; expense: number }>
+    >((acc, row) => {
+      const rowDate = String(row.date);
+      if (!acc[rowDate]) {
+        acc[rowDate] = { income: 0, expense: 0 };
+      }
+      if (row.type === 'income') {
+        acc[rowDate].income = Number(row.total || 0);
+      }
+      if (row.type === 'expense') {
+        acc[rowDate].expense = Number(row.total || 0);
+      }
+      return acc;
+    }, {});
+    const dailySummaries = Array.from({ length: 7 }, (_, index) => {
+      const summaryDate = format(addDays(new Date(currentWeekStart), index), 'yyyy-MM-dd');
+      const summary = dailySummaryMap[summaryDate] ?? { income: 0, expense: 0 };
+      return {
+        date: summaryDate,
+        income: summary.income,
+        expense: summary.expense,
+        profit: summary.income - summary.expense,
+      };
+    });
+    const expenseByCategory = currentWeekExpenseByCategoryRows
+      .map((row) => {
+        const total = Number(row.total || 0);
+        return {
+          category: row.category,
+          total,
+          count: Number(row.count || 0),
+          percentage: currentWeekExpenseTotal > 0 ? Math.round((total / currentWeekExpenseTotal) * 100) : 0,
+        };
+      })
+      .sort((a, b) => b.total - a.total);
+    const topExpenseCategory =
+      expenseByCategory[0] ?? { category: '', total: 0, count: 0, percentage: 0 };
     let weeklyTrendMessage = 'เริ่มบันทึกต่อเนื่องอีกหน่อย แล้วระบบจะสรุปแนวโน้มให้ชัดขึ้น';
 
     if (currentWeek.income > 0 || currentWeek.expense > 0 || previousWeek.income > 0 || previousWeek.expense > 0) {
@@ -364,8 +452,15 @@ export async function getDashboardSummary(date: string): Promise<DashboardSummar
       previousWeekExpenseTotal,
       currentWeekIngredientExpense,
       previousWeekIngredientExpense,
+      currentWeekProfitMargin,
+      previousWeekProfitMargin,
+      currentWeekIngredientShare,
+      currentWeekIngredientCostRate,
       currentWeek,
       previousWeek,
+      dailySummaries,
+      expenseByCategory,
+      topExpenseCategory,
       weeklyTrendMessage,
       alerts,
       incomeCount: totalsByType.income?.count || 0,

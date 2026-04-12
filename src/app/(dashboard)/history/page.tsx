@@ -9,7 +9,12 @@ import { deleteTransaction, getTransactionHistory } from '@/app/actions/transact
 import CurrencyDisplay from '@/components/shared/CurrencyDisplay';
 import ThaiDateLabel from '@/components/shared/ThaiDateLabel';
 import ThemeToggle from '@/components/shared/ThemeToggle';
-import { getTransactionTypeMeta, TRANSACTION_TYPE_OPTIONS } from '@/lib/utils/categories';
+import { useTransactionCategories } from '@/hooks/useCategories';
+import {
+  DEFAULT_TRANSACTION_CATEGORIES,
+  getTransactionTypeMeta,
+  TRANSACTION_TYPE_OPTIONS,
+} from '@/lib/utils/categories';
 import { HistoryFilters, Transaction, TransactionType } from '@/types';
 
 type FilterPreset = {
@@ -55,17 +60,52 @@ const filterPresets: FilterPreset[] = [
 type TypeFilter = 'all' | TransactionType;
 
 const toneMap = {
-  emerald: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30',
-  rose: 'bg-rose-100 text-rose-600 dark:bg-rose-900/30',
-  amber: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30',
-  sky: 'bg-sky-100 text-sky-600 dark:bg-sky-900/30',
+  emerald: {
+    selected: 'bg-emerald-600 text-white shadow-md',
+    subtle: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+    text: 'text-emerald-700 dark:text-emerald-400',
+  },
+  rose: {
+    selected: 'bg-rose-600 text-white shadow-md',
+    subtle: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300',
+    text: 'text-rose-700 dark:text-rose-400',
+  },
+  amber: {
+    selected: 'bg-amber-600 text-white shadow-md',
+    subtle: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+    text: 'text-amber-700 dark:text-amber-400',
+  },
+  sky: {
+    selected: 'bg-sky-600 text-white shadow-md',
+    subtle: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
+    text: 'text-sky-700 dark:text-sky-400',
+  },
 } as const;
+
+const defaultCategoryLabelById = DEFAULT_TRANSACTION_CATEGORIES.reduce<Record<string, string>>(
+  (acc, category) => {
+    acc[category.id] = category.label;
+    return acc;
+  },
+  {}
+);
 
 export default function HistoryPage() {
   const queryClient = useQueryClient();
   const [activeFilter, setActiveFilter] = useState(4);
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
   const [deletedTransactions, setDeletedTransactions] = useState<Transaction[]>([]);
+  const { data: transactionCategories = [] } = useTransactionCategories(true);
+  const categoryLabelById = useMemo(
+    () => ({
+      ...defaultCategoryLabelById,
+      ...transactionCategories.reduce<Record<string, string>>((acc, category) => {
+        acc[category.id] = category.label;
+        return acc;
+      }, {}),
+    }),
+    [transactionCategories]
+  );
 
   const filters: HistoryFilters = useMemo(() => {
     const preset = filterPresets[activeFilter];
@@ -176,9 +216,7 @@ export default function HistoryPage() {
                 onClick={() => setTypeFilter(type.id)}
                 className={`rounded-full px-6 py-2 text-[15px] font-semibold transition-all ${
                   typeFilter === type.id
-                    ? type.tone === 'emerald' || type.tone === 'sky'
-                      ? 'bg-apple-blue text-white shadow-md'
-                      : 'bg-near-black text-white dark:bg-white dark:text-near-black shadow-md'
+                    ? toneMap[type.tone].selected
                     : 'bg-light-gray text-muted-foreground dark:bg-near-black hover:bg-border/30'
                 }`}
               >
@@ -232,6 +270,7 @@ export default function HistoryPage() {
                       const Icon = meta.icon;
                       const isPlus = tx.type === 'income' || tx.type === 'owner_topup';
                       const amount = isPlus ? Number(tx.amount) : -Number(tx.amount);
+                      const tone = toneMap[meta.tone];
 
                       return (
                         <motion.div
@@ -241,13 +280,15 @@ export default function HistoryPage() {
                           className="apple-card p-4 group flex items-center gap-4 hover:apple-shadow border border-border/10"
                         >
                           <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-background border border-border/30">
-                            <Icon className="h-5 w-5 text-muted-foreground" />
+                            <Icon className={`h-5 w-5 ${tone.text}`} />
                           </div>
 
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
-                              <p className="text-[17px] font-semibold text-foreground truncate">{tx.category}</p>
-                              <span className="text-[11px] font-bold uppercase tracking-tight text-muted-foreground bg-light-gray dark:bg-near-black px-2 py-0.5 rounded">
+                              <p className="text-[17px] font-semibold text-foreground truncate">
+                                {categoryLabelById[tx.category] ?? tx.category}
+                              </p>
+                              <span className={`text-[11px] font-bold uppercase tracking-tight px-2 py-0.5 rounded ${tone.subtle}`}>
                                 {meta.shortLabel}
                               </span>
                             </div>
@@ -257,7 +298,7 @@ export default function HistoryPage() {
                           </div>
 
                           <div className="text-right mr-2">
-                            <p className={`text-[17px] font-bold tracking-tight ${isPlus ? 'text-apple-blue dark:text-bright-blue' : 'text-foreground'}`}>
+                            <p className={`text-[17px] font-bold tracking-tight ${tone.text}`}>
                               <CurrencyDisplay amount={amount} showSign />
                             </p>
                           </div>

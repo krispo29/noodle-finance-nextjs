@@ -13,23 +13,25 @@ import { addTransaction } from '@/app/actions/transactions';
 import { transactionSchema } from '@/lib/validations/transaction';
 import {
   getCategoriesByTransactionType,
+  getCategoryIcon,
   getTransactionTypeMeta,
   TRANSACTION_TYPE_OPTIONS,
 } from '@/lib/utils/categories';
 import { useAppStore } from '@/stores/useAppStore';
+import { useTransactionCategories } from '@/hooks/useCategories';
 
 type TransactionFormData = z.infer<typeof transactionSchema>;
 
 const toneClasses = {
   emerald: {
-    selected: 'bg-apple-blue text-white shadow-lg',
-    button: 'btn-primary',
-    badge: 'bg-apple-blue/10 text-apple-blue',
+    selected: 'bg-emerald-600 text-white shadow-lg',
+    button: 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800',
+    badge: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
   },
   rose: {
-    selected: 'bg-near-black text-white dark:bg-white dark:text-near-black shadow-lg',
-    button: 'btn-secondary',
-    badge: 'bg-near-black/5 text-near-black dark:bg-white/10 dark:text-white',
+    selected: 'bg-rose-600 text-white shadow-lg',
+    button: 'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800',
+    badge: 'bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300',
   },
   amber: {
     selected: 'bg-near-black text-white dark:bg-white dark:text-near-black shadow-lg',
@@ -51,6 +53,7 @@ export default function AddPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
+  const { data: transactionCategories = [] } = useTransactionCategories();
 
   const {
     register,
@@ -63,7 +66,7 @@ export default function AddPage() {
     defaultValues: {
       type: transactionType,
       category: selectedCategory || '',
-      amount: 0,
+      amount: undefined,
       note: '',
       transactionDate: format(new Date(), 'yyyy-MM-dd'),
     },
@@ -73,7 +76,15 @@ export default function AddPage() {
   const watchedCategory = watch('category');
   const activeType = watch('type');
   const activeTypeMeta = getTransactionTypeMeta(activeType);
-  const categories = getCategoriesByTransactionType(activeType);
+  const hasCategoriesForActiveType = transactionCategories.some(
+    (category) => category.type === activeType
+  );
+  const dbCategories = transactionCategories.filter(
+    (category) => category.type === activeType && category.isActive
+  );
+  const categories =
+    hasCategoriesForActiveType ? dbCategories : getCategoriesByTransactionType(activeType);
+  const activeCategoryIds = categories.map((category) => category.id).join('|');
   const activeTone = toneClasses[activeTypeMeta.tone];
 
   useEffect(() => {
@@ -85,6 +96,13 @@ export default function AddPage() {
       setValue('category', selectedCategory);
     }
   }, [selectedCategory, setValue]);
+
+  useEffect(() => {
+    if (watchedCategory && !activeCategoryIds.split('|').includes(watchedCategory)) {
+      setSelectedCategory('');
+      setValue('category', '');
+    }
+  }, [activeCategoryIds, setSelectedCategory, setValue, watchedCategory]);
 
   const onSelectType = (type: TransactionFormData['type']) => {
     setTransactionType(type);
@@ -221,7 +239,7 @@ export default function AddPage() {
           <div className="grid grid-cols-2 gap-3">
             <AnimatePresence mode="wait">
               {categories.map((category, index) => {
-                const Icon = category.icon;
+                const Icon = 'icon' in category ? category.icon : getCategoryIcon(category.iconName);
                 const isSelected = watchedCategory === category.id;
 
                 return (

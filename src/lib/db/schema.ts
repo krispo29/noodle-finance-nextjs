@@ -1,4 +1,15 @@
-import { pgTable, uuid, text, timestamp, numeric, date, pgEnum } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  date,
+  integer,
+  numeric,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 // Enum for transaction types
 export const transactionTypeEnum = pgEnum('transaction_type', [
@@ -32,6 +43,28 @@ export const transactions = pgTable('transactions', {
   transactionDate: date('transaction_date').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 });
+
+// User-managed transaction categories
+export const transactionCategories = pgTable(
+  'transaction_categories',
+  {
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    id: text('id').notNull(),
+    type: transactionTypeEnum('type').notNull(),
+    label: text('label').notNull(),
+    iconName: text('icon_name').notNull(),
+    sortOrder: integer('sort_order').default(0).notNull(),
+    isDefault: boolean('is_default').default(false).notNull(),
+    isActive: boolean('is_active').default(true).notNull(),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.id] }),
+  })
+);
 
 // Monthly goals table (for future phase)
 export const monthlyGoals = pgTable('monthly_goals', {

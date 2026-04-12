@@ -5,6 +5,7 @@ import {
   Package,
   Receipt,
   ShoppingBag,
+  Snowflake,
   TrendingUp,
   UtensilsCrossed,
   Wallet,
@@ -13,47 +14,128 @@ import {
 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 
+export const CATEGORY_ICON_COMPONENTS = {
+  Car,
+  Heart,
+  Home,
+  Package,
+  Receipt,
+  ShoppingBag,
+  Snowflake,
+  TrendingUp,
+  UtensilsCrossed,
+  Wallet,
+  Wrench,
+  Zap,
+} as const;
+
+export type CategoryIconName = keyof typeof CATEGORY_ICON_COMPONENTS;
+export type CategoryType = 'income' | 'expense' | 'owner_withdrawal' | 'owner_topup';
+
+export const CATEGORY_ICON_NAMES = Object.keys(
+  CATEGORY_ICON_COMPONENTS
+) as CategoryIconName[];
+
+export const CATEGORY_ICON_OPTIONS = CATEGORY_ICON_NAMES.map((iconName) => ({
+  id: iconName,
+  label: iconName,
+  icon: CATEGORY_ICON_COMPONENTS[iconName],
+}));
+
 export interface Category {
   id: string;
   label: string;
   icon: LucideIcon;
+  iconName: CategoryIconName;
 }
 
 export interface TransactionTypeOption {
-  id: 'income' | 'expense' | 'owner_withdrawal' | 'owner_topup';
+  id: CategoryType;
   label: string;
   shortLabel: string;
   icon: LucideIcon;
   tone: 'emerald' | 'rose' | 'amber' | 'sky';
 }
 
+export interface DefaultTransactionCategory extends Omit<Category, 'icon'> {
+  type: CategoryType;
+  sortOrder: number;
+}
+
+function createCategory(id: string, label: string, iconName: CategoryIconName): Category {
+  return {
+    id,
+    label,
+    iconName,
+    icon: CATEGORY_ICON_COMPONENTS[iconName],
+  };
+}
+
+export function getCategoryIcon(iconName?: string): LucideIcon {
+  if (iconName && iconName in CATEGORY_ICON_COMPONENTS) {
+    return CATEGORY_ICON_COMPONENTS[iconName as CategoryIconName];
+  }
+  return Receipt;
+}
+
 export const INCOME_CATEGORIES: Category[] = [
-  { id: 'sales', label: 'ขายของ', icon: UtensilsCrossed },
-  { id: 'service', label: 'บริการ', icon: Wrench },
-  { id: 'other_income', label: 'รายได้อื่น', icon: TrendingUp },
+  createCategory('sales', 'ขายของ', 'UtensilsCrossed'),
+  createCategory('service', 'บริการ', 'Wrench'),
+  createCategory('other_income', 'รายได้อื่น', 'TrendingUp'),
 ];
 
 export const EXPENSE_CATEGORIES: Category[] = [
-  { id: 'ingredients', label: 'วัตถุดิบ', icon: Package },
-  { id: 'supplies', label: 'อุปกรณ์', icon: ShoppingBag },
-  { id: 'rent', label: 'ค่าเช่า', icon: Home },
-  { id: 'utilities', label: 'ค่าน้ำค่าไฟ', icon: Zap },
-  { id: 'transport', label: 'ค่าเดินทาง', icon: Car },
-  { id: 'salary', label: 'เงินเดือน', icon: Wallet },
-  { id: 'maintenance', label: 'ซ่อมบำรุง', icon: Wrench },
-  { id: 'other_expense', label: 'อื่น ๆ', icon: Receipt },
+  createCategory('ingredients', 'วัตถุดิบ', 'Package'),
+  createCategory('supplies', 'อุปกรณ์', 'ShoppingBag'),
+  createCategory('ice', 'ค่าน้ำแข็ง', 'Snowflake'),
+  createCategory('utilities', 'ค่าน้ำค่าไฟ', 'Zap'),
+  createCategory('transport', 'ค่าเดินทาง', 'Car'),
+  createCategory('salary', 'เงินเดือน', 'Wallet'),
+  createCategory('maintenance', 'ซ่อมบำรุง', 'Wrench'),
+  createCategory('other_expense', 'อื่น ๆ', 'Receipt'),
 ];
 
 export const OWNER_WITHDRAWAL_CATEGORIES: Category[] = [
-  { id: 'home_expense', label: 'ถอนใช้ในบ้าน', icon: Home },
-  { id: 'personal_use', label: 'ใช้ส่วนตัว', icon: Heart },
-  { id: 'family_support', label: 'ให้คนในบ้าน', icon: Wallet },
+  createCategory('home_expense', 'ถอนใช้ในบ้าน', 'Home'),
+  createCategory('personal_use', 'ใช้ส่วนตัว', 'Heart'),
+  createCategory('family_support', 'ให้คนในบ้าน', 'Wallet'),
 ];
 
 export const OWNER_TOPUP_CATEGORIES: Category[] = [
-  { id: 'cash_topup', label: 'เติมเงินสดเข้าร้าน', icon: Wallet },
-  { id: 'emergency_topup', label: 'เติมเงินฉุกเฉิน', icon: Heart },
-  { id: 'working_capital', label: 'เงินหมุนร้าน', icon: ShoppingBag },
+  createCategory('cash_topup', 'เติมเงินสดเข้าร้าน', 'Wallet'),
+  createCategory('emergency_topup', 'เติมเงินฉุกเฉิน', 'Heart'),
+  createCategory('working_capital', 'เงินหมุนร้าน', 'ShoppingBag'),
+];
+
+export const DEFAULT_TRANSACTION_CATEGORIES: DefaultTransactionCategory[] = [
+  ...INCOME_CATEGORIES.map((category, index) => ({
+    id: category.id,
+    label: category.label,
+    iconName: category.iconName,
+    type: 'income' as const,
+    sortOrder: index,
+  })),
+  ...EXPENSE_CATEGORIES.map((category, index) => ({
+    id: category.id,
+    label: category.label,
+    iconName: category.iconName,
+    type: 'expense' as const,
+    sortOrder: index,
+  })),
+  ...OWNER_WITHDRAWAL_CATEGORIES.map((category, index) => ({
+    id: category.id,
+    label: category.label,
+    iconName: category.iconName,
+    type: 'owner_withdrawal' as const,
+    sortOrder: index,
+  })),
+  ...OWNER_TOPUP_CATEGORIES.map((category, index) => ({
+    id: category.id,
+    label: category.label,
+    iconName: category.iconName,
+    type: 'owner_topup' as const,
+    sortOrder: index,
+  })),
 ];
 
 export const TRANSACTION_TYPE_OPTIONS: TransactionTypeOption[] = [

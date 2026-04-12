@@ -24,7 +24,8 @@ import CurrencyDisplay from '@/components/shared/CurrencyDisplay';
 import ThemeToggle from '@/components/shared/ThemeToggle';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { getMonthlyReport } from '@/app/actions/transactions';
-import { INCOME_CATEGORIES, EXPENSE_CATEGORIES } from '@/lib/utils/categories';
+import { useTransactionCategories } from '@/hooks/useCategories';
+import { DEFAULT_TRANSACTION_CATEGORIES, getCategoryIcon } from '@/lib/utils/categories';
 import { format, addMonths, subMonths, startOfMonth, getDaysInMonth, eachDayOfInterval } from 'date-fns';
 
 /**
@@ -32,9 +33,29 @@ import { format, addMonths, subMonths, startOfMonth, getDaysInMonth, eachDayOfIn
  */
 export default function MonthlyPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const { data: transactionCategories = [] } = useTransactionCategories(true);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1; // 1-indexed
+  const categoryMetaById = useMemo(
+    () => ({
+      ...DEFAULT_TRANSACTION_CATEGORIES.reduce<Record<string, { label: string; iconName: string }>>(
+        (acc, category) => {
+          acc[category.id] = { label: category.label, iconName: category.iconName };
+          return acc;
+        },
+        {}
+      ),
+      ...transactionCategories.reduce<Record<string, { label: string; iconName: string }>>(
+        (acc, category) => {
+          acc[category.id] = { label: category.label, iconName: category.iconName };
+          return acc;
+        },
+        {}
+      ),
+    }),
+    [transactionCategories]
+  );
 
   // Fetch monthly report
   const { data: report, isLoading } = useQuery({
@@ -145,11 +166,11 @@ export default function MonthlyPage() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
            <div className="apple-card p-6 space-y-4 bg-light-gray/50 dark:bg-near-black/50">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background border border-border/30">
-                <TrendingUp className="h-5 w-5 text-apple-blue" />
+                <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div className="space-y-1">
                 <p className="text-[14px] font-medium text-muted-foreground uppercase tracking-tight">รายได้รวม</p>
-                <p className="text-[32px] font-bold tracking-tight text-apple-blue dark:text-bright-blue">
+                <p className="text-[32px] font-bold tracking-tight text-emerald-700 dark:text-emerald-400">
                   <CurrencyDisplay amount={report.totalIncome} />
                 </p>
               </div>
@@ -157,11 +178,11 @@ export default function MonthlyPage() {
 
            <div className="apple-card p-6 space-y-4 bg-light-gray/50 dark:bg-near-black/50">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background border border-border/30">
-                <TrendingDown className="h-5 w-5 text-foreground" />
+                <TrendingDown className="h-5 w-5 text-rose-600 dark:text-rose-400" />
               </div>
               <div className="space-y-1">
                 <p className="text-[14px] font-medium text-muted-foreground uppercase tracking-tight">รายจ่ายรวม</p>
-                <p className="text-[32px] font-bold tracking-tight text-foreground">
+                <p className="text-[32px] font-bold tracking-tight text-rose-700 dark:text-rose-400">
                   <CurrencyDisplay amount={report.totalExpense} />
                 </p>
               </div>
@@ -226,14 +247,14 @@ export default function MonthlyPage() {
                 />
                 <Bar
                   dataKey="income"
-                  fill="#0071e3"
+                  fill="#059669"
                   radius={[4, 4, 4, 4]}
                   name="รายได้"
                   barSize={12}
                 />
                 <Bar
                   dataKey="expense"
-                  fill="#1d1d1f"
+                  fill="#e11d48"
                   radius={[4, 4, 4, 4]}
                   name="รายจ่าย"
                   barSize={12}
@@ -257,16 +278,18 @@ export default function MonthlyPage() {
               <h3 className="text-[17px] font-bold tracking-tight uppercase text-muted-foreground">รายได้แยกตามหมวดหมู่</h3>
               <div className="space-y-4">
                 {incomeCategories.map((cat) => {
-                   const category = INCOME_CATEGORIES.find((c) => c.id === cat.category);
-                   const Icon = category?.icon || TrendingUp;
+                   const category = categoryMetaById[cat.category];
+                   const Icon = category ? getCategoryIcon(category.iconName) : TrendingUp;
                    return (
                      <div key={cat.category} className="space-y-2">
                         <div className="flex items-center justify-between">
                            <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-lg bg-apple-blue/10 text-apple-blue">
+                              <div className="p-2 rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
                                 <Icon className="w-4 h-4" />
                               </div>
-                              <span className="font-semibold text-[15px]">{cat.category}</span>
+                              <span className="font-semibold text-[15px]">
+                                {category?.label ?? cat.category}
+                              </span>
                            </div>
                            <p className="font-bold text-[15px]"><CurrencyDisplay amount={cat.total} /></p>
                         </div>
@@ -274,7 +297,7 @@ export default function MonthlyPage() {
                            <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${cat.percentage}%` }}
-                              className="h-full bg-apple-blue rounded-full"
+                              className="h-full bg-emerald-600 rounded-full"
                            />
                         </div>
                      </div>
@@ -288,16 +311,18 @@ export default function MonthlyPage() {
               <h3 className="text-[17px] font-bold tracking-tight uppercase text-muted-foreground">ค่าใช้จ่ายแยกตามหมวดหมู่</h3>
               <div className="space-y-4">
                 {expenseCategories.map((cat) => {
-                   const category = EXPENSE_CATEGORIES.find((c) => c.id === cat.category);
-                   const Icon = category?.icon || TrendingDown;
+                   const category = categoryMetaById[cat.category];
+                   const Icon = category ? getCategoryIcon(category.iconName) : TrendingDown;
                    return (
                      <div key={cat.category} className="space-y-2">
                         <div className="flex items-center justify-between">
                            <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-lg bg-near-black/5 dark:bg-white/10 text-foreground">
+                              <div className="p-2 rounded-lg bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300">
                                 <Icon className="w-4 h-4" />
                               </div>
-                              <span className="font-semibold text-[15px]">{cat.category}</span>
+                              <span className="font-semibold text-[15px]">
+                                {category?.label ?? cat.category}
+                              </span>
                            </div>
                            <p className="font-bold text-[15px]"><CurrencyDisplay amount={cat.total} /></p>
                         </div>
@@ -305,7 +330,7 @@ export default function MonthlyPage() {
                            <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${cat.percentage}%` }}
-                              className="h-full bg-foreground rounded-full"
+                              className="h-full bg-rose-600 rounded-full"
                            />
                         </div>
                      </div>

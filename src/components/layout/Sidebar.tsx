@@ -8,6 +8,7 @@ import {
   PlusCircle,
   List,
   BarChart2,
+  User,
   LogOut,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -18,6 +19,7 @@ const navItems = [
   { label: 'บันทึก', icon: PlusCircle, href: '/add' },
   { label: 'ประวัติ', icon: List, href: '/history' },
   { label: 'รายเดือน', icon: BarChart2, href: '/monthly' },
+  { label: 'โปรไฟล์', icon: User, href: '/profile' },
 ];
 
 /**
@@ -56,7 +58,10 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            item.href === '/'
+              ? pathname === item.href
+              : pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
 
           return (

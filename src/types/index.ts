@@ -1,5 +1,11 @@
 import { InferSelectModel } from 'drizzle-orm';
-import { transactions, users, monthlyGoals, transactionTypeEnum } from '@/lib/db/schema';
+import {
+  monthlyGoals,
+  transactionCategories,
+  transactionTypeEnum,
+  transactions,
+  users,
+} from '@/lib/db/schema';
 
 // User type from database schema
 export type User = InferSelectModel<typeof users>;
@@ -9,6 +15,9 @@ export type Transaction = InferSelectModel<typeof transactions>;
 
 // Monthly goals type from database schema
 export type MonthlyGoal = InferSelectModel<typeof monthlyGoals>;
+
+// Transaction category type from database schema
+export type TransactionCategoryRow = InferSelectModel<typeof transactionCategories>;
 
 // Transaction type enum
 export type TransactionType = typeof transactionTypeEnum.enumValues[number];
@@ -20,6 +29,17 @@ export interface TransactionInput {
   amount: number;
   note?: string;
   transactionDate: string;
+}
+
+export interface TransactionCategory {
+  id: string;
+  type: TransactionType;
+  label: string;
+  iconName: string;
+  sortOrder: number;
+  isDefault: boolean;
+  isActive: boolean;
+  transactionCount: number;
 }
 
 export interface DashboardAlert {
@@ -38,6 +58,20 @@ export interface WeeklyTrendSummary {
   averageIngredientExpensePerDay: number;
 }
 
+export interface DashboardDailySummary {
+  date: string;
+  income: number;
+  expense: number;
+  profit: number;
+}
+
+export interface DashboardCategoryTotal {
+  category: string;
+  total: number;
+  count: number;
+  percentage: number;
+}
+
 // Dashboard summary
 export interface DashboardSummary {
   totalIncome: number;
@@ -53,8 +87,15 @@ export interface DashboardSummary {
   previousWeekExpenseTotal: number;
   currentWeekIngredientExpense: number;
   previousWeekIngredientExpense: number;
+  currentWeekProfitMargin: number;
+  previousWeekProfitMargin: number;
+  currentWeekIngredientShare: number;
+  currentWeekIngredientCostRate: number;
   currentWeek: WeeklyTrendSummary;
   previousWeek: WeeklyTrendSummary;
+  dailySummaries: DashboardDailySummary[];
+  expenseByCategory: DashboardCategoryTotal[];
+  topExpenseCategory: DashboardCategoryTotal;
   weeklyTrendMessage: string;
   alerts: DashboardAlert[];
   incomeCount: number;
