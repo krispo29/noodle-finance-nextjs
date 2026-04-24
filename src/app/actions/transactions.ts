@@ -582,51 +582,91 @@ export async function getMonthlyReport(
 
     const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
     const daysInMonth = new Date(year, month, 0).getDate();
-    const endDate = `${year}-${String(month).padStart(2, '0')}-${daysInMonth}`;
+    const endDate = `${year}-${String(month).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`;
 
-    const incomeResult = await db
+    const monthlyRows = await db
       .select({
+        type: transactions.type,
+        category: transactions.category,
+        date: transactions.transactionDate,
         total: sql<number>`COALESCE(SUM(CAST(amount AS FLOAT)), 0)`,
       })
       .from(transactions)
       .where(
         and(
           eq(transactions.userId, user.userId),
-          eq(transactions.type, 'income'),
           gte(transactions.transactionDate, startDate),
           lte(transactions.transactionDate, endDate)
         )
-      );
+      )
+      .groupBy(transactions.type, transactions.category, transactions.transactionDate);
 
-    const expenseResult = await db
-      .select({
-        total: sql<number>`COALESCE(SUM(CAST(amount AS FLOAT)), 0)`,
-      })
-      .from(transactions)
-      .where(
-        and(
-          eq(transactions.userId, user.userId),
-          eq(transactions.type, 'expense'),
-          gte(transactions.transactionDate, startDate),
-          lte(transactions.transactionDate, endDate)
-        )
-      );
+    const dailySummaryMap: Record<string, { income: number; expense: number }> = {};
+    const incomeByCategoryMap: Record<string, number> = {};
+    const expenseByCategoryMap: Record<string, number> = {};
 
-    const totalIncome = Number(incomeResult[0]?.total || 0);
-    const totalExpense = Number(expenseResult[0]?.total || 0);
+    const totalsByType = monthlyRows.reduce<Record<string, number>>((acc, row) => {
+      const amount = Number(row.total || 0);
+      const rowType = row.type;
+      const rowDate = String(row.date);
+
+      acc[rowType] = (acc[rowType] || 0) + amount;
+
+      if (!dailySummaryMap[rowDate]) {
+        dailySummaryMap[rowDate] = { income: 0, expense: 0 };
+      }
+
+      if (rowType === 'income') {
+        dailySummaryMap[rowDate].income += amount;
+        incomeByCategoryMap[row.category] = (incomeByCategoryMap[row.category] || 0) + amount;
+      }
+
+      if (rowType === 'expense') {
+        dailySummaryMap[rowDate].expense += amount;
+        expenseByCategoryMap[row.category] = (expenseByCategoryMap[row.category] || 0) + amount;
+      }
+
+      return acc;
+    }, {});
+
+    const totalIncome = totalsByType.income || 0;
+    const totalExpense = totalsByType.expense || 0;
     const profit = totalIncome - totalExpense;
     const profitMargin = totalIncome > 0 ? Math.round((profit / totalIncome) * 100) : 0;
+    const dailySummaries = Array.from({ length: daysInMonth }, (_, index) => {
+      const summaryDate = `${year}-${String(month).padStart(2, '0')}-${String(index + 1).padStart(2, '0')}`;
+      const summary = dailySummaryMap[summaryDate] ?? { income: 0, expense: 0 };
+
+      return {
+        date: summaryDate,
+        income: summary.income,
+        expense: summary.expense,
+      };
+    });
+    const incomeByCategory = Object.entries(incomeByCategoryMap)
+      .map(([category, total]) => ({
+        category,
+        total,
+      }))
+      .sort((a, b) => b.total - a.total);
+    const expenseByCategory = Object.entries(expenseByCategoryMap)
+      .map(([category, total]) => ({
+        category,
+        total,
+      }))
+      .sort((a, b) => b.total - a.total);
+    const topExpenseCategory = expenseByCategory[0] ?? { category: '', total: 0 };
 
     return {
       totalIncome,
       totalExpense,
       profit,
       profitMargin,
-      incomeByCategory: [],
-      expenseByCategory: [],
-      dailySummaries: [],
+      incomeByCategory,
+      expenseByCategory,
+      dailySummaries,
       averageDailyIncome: daysInMonth > 0 ? totalIncome / daysInMonth : 0,
-      topExpenseCategory: { category: '', total: 0 },
+      topExpenseCategory,
     };
   } catch (error) {
     console.error('Get monthly report error:', error);
