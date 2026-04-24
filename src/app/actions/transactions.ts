@@ -576,6 +576,7 @@ export async function getMonthlyReport(
         expenseByCategory: [],
         dailySummaries: [],
         averageDailyIncome: 0,
+        averageDailyProfit: 0,
         topExpenseCategory: { category: '', total: 0 },
       };
     }
@@ -666,6 +667,7 @@ export async function getMonthlyReport(
       expenseByCategory,
       dailySummaries,
       averageDailyIncome: daysInMonth > 0 ? totalIncome / daysInMonth : 0,
+      averageDailyProfit: daysInMonth > 0 ? profit / daysInMonth : 0,
       topExpenseCategory,
     };
   } catch (error) {
@@ -679,6 +681,7 @@ export async function getMonthlyReport(
       expenseByCategory: [],
       dailySummaries: [],
       averageDailyIncome: 0,
+      averageDailyProfit: 0,
       topExpenseCategory: { category: '', total: 0 },
     };
   }

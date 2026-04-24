@@ -346,7 +346,7 @@ export default function MonthlyPage() {
         <section className="space-y-4">
           <h2 className="text-[21px] font-semibold tracking-tight">วิเคราะห์เดือนนี้</h2>
           <div className="apple-card p-8 bg-apple-blue dark:bg-near-black text-white space-y-6">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-1">
                    <p className="text-[14px] font-bold uppercase tracking-widest text-white/60">กำไรสุทธิ</p>
                    <p className="text-[32px] font-bold tracking-tight">
@@ -357,6 +357,12 @@ export default function MonthlyPage() {
                    <p className="text-[14px] font-bold uppercase tracking-widest text-white/60">รายได้เฉลี่ยรายวัน</p>
                    <p className="text-[32px] font-bold tracking-tight">
                      <CurrencyDisplay amount={report.averageDailyIncome} />
+                   </p>
+                </div>
+                <div className="space-y-1">
+                   <p className="text-[14px] font-bold uppercase tracking-widest text-white/60">กำไรเฉลี่ยรายวัน</p>
+                   <p className="text-[32px] font-bold tracking-tight">
+                     <CurrencyDisplay amount={report.averageDailyProfit} />
                    </p>
                 </div>
              </div>

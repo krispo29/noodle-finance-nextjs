@@ -123,6 +123,7 @@ export interface MonthlyReport {
   expenseByCategory: { category: string; total: number }[];
   dailySummaries: { date: string; income: number; expense: number }[];
   averageDailyIncome: number;
+  averageDailyProfit: number;
   topExpenseCategory: { category: string; total: number };
 }
 
