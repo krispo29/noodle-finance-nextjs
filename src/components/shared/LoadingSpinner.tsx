@@ -1,7 +1,5 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
-
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
@@ -9,7 +7,7 @@ interface LoadingSpinnerProps {
 }
 
 /**
- * Loading spinner component with optional text
+ * Backward-compatible loading component that renders skeleton shapes.
  */
 export default function LoadingSpinner({ 
   size = 'md', 
@@ -17,14 +15,14 @@ export default function LoadingSpinner({
   text 
 }: LoadingSpinnerProps) {
   const sizeMap = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
+    sm: 'h-4 w-24',
+    md: 'h-8 w-40',
+    lg: 'h-12 w-56',
   };
 
   return (
     <div className={`flex flex-col items-center justify-center gap-2 ${className}`}>
-      <Loader2 className={`${sizeMap[size]} animate-spin text-brand-600`} />
+      <div className={`${sizeMap[size]} animate-pulse rounded-md bg-muted`} />
       {text && (
         <p className="text-sm text-muted-foreground">{text}</p>
       )}

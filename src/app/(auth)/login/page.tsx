@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useActionState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { Eye, EyeOff } from 'lucide-react';
 import { loginSchema } from '@/lib/validations/transaction';
 import { loginAction } from '@/app/actions/auth';
 import type { z } from 'zod';
@@ -77,12 +78,19 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-[48px] md:text-[64px]"
+            className="mx-auto flex h-20 w-20 items-center justify-center rounded-lg bg-light-gray p-3 dark:bg-near-black"
           >
-            🍜
+            <Image
+              src="/logo.png"
+              alt="Noodle Finance Logo"
+              width={64}
+              height={64}
+              className="h-14 w-14 object-contain"
+              priority
+            />
           </motion.div>
           <div className="space-y-1">
-            <h1 className="text-[34px] md:text-[40px] font-semibold tracking-tight leading-tight text-foreground">
+            <h1 className="text-[34px] md:text-[40px] font-semibold leading-tight text-foreground">
               เข้าสู่ระบบร้าน
             </h1>
             <p className="text-[17px] text-muted-foreground font-medium uppercase tracking-widest">
@@ -124,13 +132,16 @@ export default function LoginPage() {
                     errors.password ? 'ring-2 ring-rose-500' : ''
                   }`}
                 />
-                <button
+                <motion.button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground transition-colors"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  className="absolute right-3 top-1/2 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
+                </motion.button>
               </div>
               {errors.password && (
                 <p className="text-[14px] text-rose-600 font-medium px-2">{errors.password.message}</p>
@@ -151,17 +162,20 @@ export default function LoginPage() {
 
           {/* Submit Button */}
           <div className="pt-4">
-            <button
+            <motion.button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-4 rounded-full text-[17px] font-bold tracking-tight transition-all shadow-xl ${
+              whileHover={isLoading ? undefined : { scale: 1.02 }}
+              whileTap={isLoading ? undefined : { scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              className={`w-full min-h-[56px] rounded-full py-4 text-[17px] font-bold transition-all shadow-xl ${
                 isLoading
                   ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                  : 'bg-apple-blue hover:bg-apple-blue/90 text-white active:scale-[0.98]'
+                  : 'bg-apple-blue hover:bg-apple-blue/90 text-white'
               }`}
             >
               {isLoading ? 'กำลังเข้าสู่ระบบ...' : 'ลงชื่อเข้าใช้'}
-            </button>
+            </motion.button>
           </div>
         </form>
 

@@ -10,7 +10,6 @@ import {
   BarChart2,
   User,
 } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
 
 const navItems = [
   { label: 'ภาพรวม', icon: Home, href: '/' },
@@ -39,22 +38,29 @@ export default function BottomNav() {
               href={item.href}
               className="relative flex flex-col items-center justify-center flex-1 h-full min-w-[64px]"
             >
-              <Icon
-                className={`w-6 h-6 transition-colors ${
-                  isActive
-                    ? 'text-apple-blue dark:text-bright-blue'
-                    : 'text-muted-foreground'
-                }`}
-              />
-              <span
-                className={`text-[10px] mt-1 transition-colors font-medium tracking-tight ${
-                  isActive
-                    ? 'text-apple-blue dark:text-bright-blue'
-                    : 'text-muted-foreground'
-                }`}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                className="flex min-h-[44px] min-w-[44px] flex-col items-center justify-center"
               >
-                {item.label}
-              </span>
+                <Icon
+                  className={`w-6 h-6 transition-colors ${
+                    isActive
+                      ? 'text-apple-blue dark:text-bright-blue'
+                      : 'text-muted-foreground'
+                  }`}
+                />
+                <span
+                  className={`text-[10px] mt-1 transition-colors font-medium ${
+                    isActive
+                      ? 'text-apple-blue dark:text-bright-blue'
+                      : 'text-muted-foreground'
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </motion.div>
             </Link>
           );
         })}

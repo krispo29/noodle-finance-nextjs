@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -63,6 +63,21 @@ const defaultCategoryLabelById = [
 function formatPercent(value: number) {
   return `${value}%`;
 }
+
+const springTap = { type: 'spring', stiffness: 400, damping: 17 } as const;
+
+const staggerList = {
+  animate: {
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const listItem = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+};
 
 export default function DashboardPage() {
   const queryClient = useQueryClient();
@@ -179,7 +194,11 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl space-y-10 px-4 pb-28 pt-8 md:px-8">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mx-auto max-w-5xl space-y-10 px-4 pb-28 pt-8 md:px-8"
+    >
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <ThaiDateLabel
@@ -192,7 +211,7 @@ export default function DashboardPage() {
           <p className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">
             Restaurant dashboard
           </p>
-          <h1 className="text-[40px] font-semibold leading-[1.07] tracking-tight text-foreground md:text-[56px]">
+          <h1 className="text-[40px] font-semibold leading-[1.07] text-foreground md:text-[56px]">
             ดูยอดขาย ต้นทุน และเงินสดของร้านในที่เดียว
           </h1>
           <p className="max-w-2xl text-[21px] font-medium leading-snug text-muted-foreground">
@@ -202,8 +221,14 @@ export default function DashboardPage() {
       </section>
 
       {isLoading ? (
-        <div className="apple-card flex min-h-80 items-center justify-center text-muted-foreground">
-          กำลังสรุปข้อมูลร้าน...
+        <div className="apple-card min-h-80 space-y-6 p-6">
+          <div className="h-8 w-40 animate-pulse rounded-md bg-muted" />
+          <div className="h-20 w-3/4 animate-pulse rounded-md bg-muted" />
+          <div className="grid gap-4 md:grid-cols-4">
+            {[1, 2, 3, 4].map((item) => (
+              <div key={item} className="h-28 animate-pulse rounded-lg bg-muted" />
+            ))}
+          </div>
         </div>
       ) : (
         <>
@@ -220,7 +245,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="space-y-3">
                   <p
-                    className={`text-[52px] font-bold leading-none tracking-tighter md:text-[72px] ${
+                    className={`text-[52px] font-bold leading-none md:text-[72px] ${
                       safeSummary.actualCashBalance >= 0
                         ? 'text-foreground'
                         : 'text-rose-600 dark:text-rose-400'
@@ -228,16 +253,30 @@ export default function DashboardPage() {
                   >
                     <CurrencyDisplay amount={safeSummary.actualCashBalance} showSign />
                   </p>
-                  <p className="text-[14px] font-medium text-muted-foreground">
+                  <p className="text-[14px] font-medium tabular-nums text-muted-foreground">
                     รายรับ + เติมเงิน - รายจ่าย - ถอนใช้ส่วนตัว
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <Link href="/add" className="btn-primary min-h-11 rounded-lg px-5">
-                    เพิ่มรายการ
+                  <Link href="/add">
+                    <motion.span
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      transition={springTap}
+                      className="btn-primary min-h-[44px] rounded-lg px-5"
+                    >
+                      เพิ่มรายการ
+                    </motion.span>
                   </Link>
-                  <Link href="/monthly" className="btn-outline min-h-11 rounded-lg px-5">
-                    รายงานเดือน
+                  <Link href="/monthly">
+                    <motion.span
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      transition={springTap}
+                      className="btn-outline min-h-[44px] rounded-lg px-5"
+                    >
+                      รายงานเดือน
+                    </motion.span>
                   </Link>
                 </div>
               </div>
@@ -246,11 +285,11 @@ export default function DashboardPage() {
                 <div className="rounded-lg bg-background p-5 dark:bg-black/30">
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-[14px] font-semibold uppercase tracking-tight text-muted-foreground">
+                      <p className="text-[14px] font-semibold uppercase text-muted-foreground">
                         กำไรวันนี้
                       </p>
                       <p
-                        className={`mt-1 text-[32px] font-bold tracking-tight ${
+                        className={`mt-1 text-[32px] font-bold ${
                           safeSummary.profit >= 0
                             ? 'text-emerald-700 dark:text-emerald-400'
                             : 'text-rose-700 dark:text-rose-400'
@@ -274,10 +313,10 @@ export default function DashboardPage() {
                 <div className="rounded-lg bg-background p-5 dark:bg-black/30">
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-[14px] font-semibold uppercase tracking-tight text-muted-foreground">
+                      <p className="text-[14px] font-semibold uppercase text-muted-foreground">
                         วัตถุดิบ / ยอดขาย 7 วัน
                       </p>
-                      <p className="mt-1 text-[32px] font-bold tracking-tight text-foreground">
+                      <p className="mt-1 text-[32px] font-bold text-foreground">
                         {formatPercent(safeSummary.currentWeekIngredientCostRate)}
                       </p>
                     </div>
@@ -328,20 +367,26 @@ export default function DashboardPage() {
             ].map((card) => {
               const Icon = card.icon;
               return (
-                <div key={card.label} className="apple-card space-y-4 p-5">
+                <motion.div
+                  key={card.label}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={springTap}
+                  className="apple-card space-y-4 p-5"
+                >
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-background dark:bg-black/30">
                     <Icon className={`h-5 w-5 ${card.className}`} />
                   </div>
                   <div className="space-y-1">
-                    <p className="truncate text-[14px] font-semibold uppercase tracking-tight text-muted-foreground">
+                    <p className="truncate text-[14px] font-semibold uppercase text-muted-foreground">
                       {card.label}
                     </p>
-                    <p className={`truncate text-[24px] font-bold tracking-tight ${card.className}`}>
+                    <p className={`truncate text-[24px] font-bold ${card.className}`}>
                       <CurrencyDisplay amount={card.value} showSign={card.showSign} />
                     </p>
                     <p className="truncate text-[12px] font-semibold text-muted-foreground">{card.helper}</p>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </section>
@@ -353,7 +398,7 @@ export default function DashboardPage() {
                   <p className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">
                     7-day trend
                   </p>
-                  <h2 className="text-[28px] font-semibold tracking-tight">ยอดขายเทียบรายจ่าย</h2>
+                  <h2 className="text-[28px] font-semibold">ยอดขายเทียบรายจ่าย</h2>
                 </div>
                 <div className="flex items-center gap-2 text-[14px] font-semibold text-muted-foreground">
                   <BarChart3 className="h-4 w-4" />
@@ -382,7 +427,7 @@ export default function DashboardPage() {
                         content={({ active, payload }) => {
                           if (active && payload && payload.length) {
                             return (
-                              <div className="glass rounded-lg border border-border/50 p-3 shadow-xl">
+                              <div className="glass apple-card rounded-lg border border-border/50 p-3 shadow-xl">
                                 <p className="mb-2 text-[12px] font-bold uppercase text-muted-foreground">
                                   วันที่ {payload[0].payload.label}
                                 </p>
@@ -401,14 +446,16 @@ export default function DashboardPage() {
                           return null;
                         }}
                       />
-                      <Bar dataKey="income" fill="#059669" radius={[4, 4, 4, 4]} name="รายรับ" barSize={14} />
-                      <Bar dataKey="expense" fill="#e11d48" radius={[4, 4, 4, 4]} name="รายจ่าย" barSize={14} />
+                      <Bar dataKey="income" fill="#34d399" radius={[4, 4, 4, 4]} name="รายรับ" barSize={14} />
+                      <Bar dataKey="expense" fill="#fb7185" radius={[4, 4, 4, 4]} name="รายจ่าย" barSize={14} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               ) : (
-                <div className="flex h-72 items-center justify-center rounded-lg border border-dashed border-border/60 text-center text-[17px] font-medium text-muted-foreground">
-                  ยังไม่มีข้อมูลพอสำหรับกราฟ 7 วัน
+                <div className="flex h-72 flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border/60 text-center text-muted-foreground">
+                  <BarChart3 className="h-12 w-12 rounded-full bg-apple-blue/10 p-3 text-apple-blue" />
+                  <p className="text-[21px] font-bold text-foreground">ยังไม่มีข้อมูลพอสำหรับกราฟ 7 วัน</p>
+                  <p className="text-[17px] font-medium">เพิ่มรายการรายรับหรือรายจ่ายเพื่อดูแนวโน้ม</p>
                 </div>
               )}
             </div>
@@ -418,13 +465,13 @@ export default function DashboardPage() {
                 <p className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">
                   Cost control
                 </p>
-                <h2 className="text-[28px] font-semibold tracking-tight">หมวดที่กินต้นทุน</h2>
+                <h2 className="text-[28px] font-semibold">หมวดที่กินต้นทุน</h2>
               </div>
 
               <div className="rounded-lg bg-background p-4 dark:bg-black/30">
                 <p className="text-[14px] font-semibold text-muted-foreground">รายจ่ายสูงสุด 7 วัน</p>
                 <div className="mt-2 flex items-end justify-between gap-3">
-                  <p className="text-[24px] font-bold tracking-tight">{topExpenseLabel}</p>
+                  <p className="text-[24px] font-bold">{topExpenseLabel}</p>
                   <p className="text-[17px] font-bold text-rose-700 dark:text-rose-400">
                     <CurrencyDisplay amount={safeSummary.topExpenseCategory.total} />
                   </p>
@@ -433,9 +480,11 @@ export default function DashboardPage() {
 
               <div className="space-y-4">
                 {safeSummary.expenseByCategory.length === 0 ? (
-                  <p className="rounded-lg border border-dashed border-border/60 p-6 text-center text-[17px] font-medium text-muted-foreground">
-                    ยังไม่มีรายจ่ายในช่วง 7 วันล่าสุด
-                  </p>
+                  <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border/60 p-8 text-center text-muted-foreground">
+                    <Receipt className="h-12 w-12 rounded-full bg-rose-50 p-3 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400" />
+                    <p className="text-[17px] font-bold text-foreground">ยังไม่มีรายจ่ายในช่วง 7 วันล่าสุด</p>
+                    <p className="text-[15px] font-medium">เมื่อมีต้นทุน ระบบจะแสดงหมวดที่ควรจับตาที่นี่</p>
+                  </div>
                 ) : (
                   safeSummary.expenseByCategory.slice(0, 5).map((category) => (
                     <div key={category.category} className="space-y-2">
@@ -468,13 +517,13 @@ export default function DashboardPage() {
             <div className="apple-card space-y-5 p-6">
               <div className="flex items-center gap-3">
                 <Goal className="h-5 w-5 text-apple-blue" />
-                <h2 className="text-[21px] font-semibold tracking-tight">เป้ายอดขายวันนี้</h2>
+                <h2 className="text-[21px] font-semibold">เป้ายอดขายวันนี้</h2>
               </div>
 
               {safeSummary.dailySalesGoal > 0 ? (
                 <div className="space-y-2">
                   <p className="text-[14px] font-semibold text-muted-foreground">ตั้งไว้</p>
-                  <p className="text-[32px] font-bold tracking-tight">
+                  <p className="text-[32px] font-bold">
                     <CurrencyDisplay amount={safeSummary.dailySalesGoal} />
                   </p>
                   <p className="text-[14px] font-medium text-muted-foreground">
@@ -500,32 +549,41 @@ export default function DashboardPage() {
                       className="min-h-11 w-36 rounded-lg border border-border bg-background px-4 py-2 text-[17px] font-medium outline-none transition-all focus:ring-2 focus:ring-apple-blue"
                       placeholder="2500"
                     />
-                    <button
+                    <motion.button
                       type="button"
                       onClick={handleSaveGoal}
                       disabled={isSavingGoal}
-                      className="btn-primary min-h-11 rounded-lg px-4"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      transition={springTap}
+                      className="btn-primary min-h-[44px] rounded-lg px-4"
                     >
                       <Save className="mr-2 h-4 w-4" />
                       {isSavingGoal ? '...' : 'บันทึก'}
-                    </button>
+                    </motion.button>
                   </div>
-                  <button
+                  <motion.button
                     type="button"
                     onClick={() => setIsEditingGoal(false)}
-                    className="text-[14px] font-semibold text-muted-foreground hover:text-foreground"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={springTap}
+                    className="min-h-[44px] text-[14px] font-semibold text-muted-foreground hover:text-foreground"
                   >
                     ยกเลิก
-                  </button>
+                  </motion.button>
                 </div>
               ) : (
-                <button
+                <motion.button
                   type="button"
                   onClick={() => setIsEditingGoal(true)}
-                  className="btn-outline min-h-11 rounded-lg px-5"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={springTap}
+                  className="btn-outline min-h-[44px] rounded-lg px-5"
                 >
                   {safeSummary.dailySalesGoal > 0 ? 'แก้ไขเป้าหมาย' : 'ตั้งเป้าหมาย'}
-                </button>
+                </motion.button>
               )}
               {goalMessage && <p className="text-[14px] font-medium text-muted-foreground">{goalMessage}</p>}
             </div>
@@ -536,7 +594,7 @@ export default function DashboardPage() {
                   <p className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">
                     Insights
                   </p>
-                  <h2 className="text-[21px] font-semibold tracking-tight">สิ่งที่ควรจับตา</h2>
+                  <h2 className="text-[21px] font-semibold">สิ่งที่ควรจับตา</h2>
                 </div>
                 <Info className="h-5 w-5 text-muted-foreground" />
               </div>
@@ -576,18 +634,37 @@ export default function DashboardPage() {
 
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-[21px] font-semibold tracking-tight">รายการล่าสุดวันนี้</h2>
-              <Link href="/history" className="text-[14px] font-semibold text-apple-blue hover:underline">
-                ดูทั้งหมด
+              <h2 className="text-[21px] font-semibold">รายการล่าสุดวันนี้</h2>
+              <Link href="/history">
+                <motion.span
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={springTap}
+                  className="inline-flex min-h-[44px] items-center text-[14px] font-semibold text-apple-blue hover:underline"
+                >
+                  ดูทั้งหมด
+                </motion.span>
               </Link>
             </div>
 
             {safeSummary.recentTransactions.length === 0 ? (
-              <div className="apple-card border border-dashed border-border/50 py-14 text-center text-muted-foreground">
-                <p className="text-[17px] font-medium">ยังไม่มีรายการวันนี้</p>
+              <div className="apple-card flex flex-col items-center justify-center gap-3 border border-dashed border-border/50 py-14 text-center text-muted-foreground">
+                <PlusCircle className="h-12 w-12 rounded-full bg-apple-blue/10 p-3 text-apple-blue" />
+                <p className="text-[21px] font-bold text-foreground">ยังไม่มีรายการวันนี้</p>
+                <p className="text-[17px] font-medium">เริ่มบันทึกรายการแรกเพื่อดูสรุปประจำวัน</p>
+                <Link href="/add">
+                  <motion.span
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={springTap}
+                    className="btn-primary mt-2 min-h-[44px] rounded-lg px-5"
+                  >
+                    เพิ่มรายการ
+                  </motion.span>
+                </Link>
               </div>
             ) : (
-              <div className="space-y-2">
+              <motion.div variants={staggerList} initial="initial" animate="animate" className="space-y-2">
                 {safeSummary.recentTransactions.map((tx) => {
                   const meta = getTransactionTypeMeta(tx.type);
                   const Icon = meta.icon;
@@ -595,7 +672,14 @@ export default function DashboardPage() {
                   const toneClassName = transactionToneClasses[tx.type];
 
                   return (
-                    <div key={tx.id} className="apple-card flex items-center gap-4 rounded-lg p-4">
+                    <motion.div
+                      key={tx.id}
+                      variants={listItem}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      transition={springTap}
+                      className="apple-card flex items-center gap-4 rounded-lg p-4"
+                    >
                       <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-background dark:bg-black/30">
                         <Icon className={`h-5 w-5 ${toneClassName}`} />
                       </div>
@@ -608,14 +692,14 @@ export default function DashboardPage() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className={`text-[17px] font-bold tracking-tight ${toneClassName}`}>
+                        <p className={`text-[17px] font-bold ${toneClassName}`}>
                           <CurrencyDisplay amount={isPlus ? Number(tx.amount) : -Number(tx.amount)} showSign />
                         </p>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
           </section>
         </>
@@ -623,10 +707,17 @@ export default function DashboardPage() {
 
       <Link
         href="/add"
-        className="fixed bottom-24 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-apple-blue text-white shadow-xl transition-all hover:scale-105 active:scale-95 md:bottom-12 md:right-12"
+        className="fixed bottom-24 right-6 z-50 md:bottom-12 md:right-12"
       >
-        <PlusCircle className="h-8 w-8" />
+        <motion.span
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={springTap}
+          className="flex h-16 w-16 items-center justify-center rounded-full bg-apple-blue text-white shadow-xl"
+        >
+          <PlusCircle className="h-8 w-8" />
+        </motion.span>
       </Link>
-    </div>
+    </motion.div>
   );
 }

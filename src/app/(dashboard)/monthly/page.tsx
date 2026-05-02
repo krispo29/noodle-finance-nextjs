@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   TrendingUp,
   TrendingDown,
@@ -22,7 +22,6 @@ import {
 } from 'recharts';
 import CurrencyDisplay from '@/components/shared/CurrencyDisplay';
 import ThemeToggle from '@/components/shared/ThemeToggle';
-import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { getMonthlyReport } from '@/app/actions/transactions';
 import { useTransactionCategories } from '@/hooks/useCategories';
 import { DEFAULT_TRANSACTION_CATEGORIES, getCategoryIcon } from '@/lib/utils/categories';
@@ -123,7 +122,11 @@ export default function MonthlyPage() {
   const monthName = thaiMonthNames[currentDate.getMonth()];
 
   return (
-    <div className="mx-auto max-w-4xl space-y-12 pb-32 pt-8 px-4 md:px-8">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mx-auto max-w-4xl space-y-12 pb-32 pt-8 px-4 md:px-8"
+    >
       {/* Header with month navigation */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
@@ -133,7 +136,7 @@ export default function MonthlyPage() {
         
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h1 className="text-[40px] md:text-[56px] font-semibold tracking-tight leading-tight text-foreground">
+            <h1 className="text-[40px] md:text-[56px] font-semibold leading-tight text-foreground tabular-nums">
               {monthName} {thaiYear}
             </h1>
             <p className="text-[21px] text-muted-foreground font-medium max-w-lg leading-snug">
@@ -143,20 +146,26 @@ export default function MonthlyPage() {
           </div>
           
           <div className="flex gap-2">
-            <button
+            <motion.button
               onClick={prevMonth}
-              className="p-3 rounded-full bg-light-gray dark:bg-near-black hover:bg-border/30 transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              className="min-h-[44px] min-w-[44px] p-3 rounded-full bg-light-gray dark:bg-near-black hover:bg-border/30 transition-all"
               aria-label="เดือนก่อนหน้า"
             >
               <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={nextMonth}
-              className="p-3 rounded-full bg-light-gray dark:bg-near-black hover:bg-border/30 transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              className="min-h-[44px] min-w-[44px] p-3 rounded-full bg-light-gray dark:bg-near-black hover:bg-border/30 transition-all"
               aria-label="เดือนถัดไป"
             >
               <ChevronRight className="w-6 h-6" />
-            </button>
+            </motion.button>
           </div>
         </div>
       </section>
@@ -169,8 +178,8 @@ export default function MonthlyPage() {
                 <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div className="space-y-1">
-                <p className="text-[14px] font-medium text-muted-foreground uppercase tracking-tight">รายได้รวม</p>
-                <p className="text-[32px] font-bold tracking-tight text-emerald-700 dark:text-emerald-400">
+                <p className="text-[14px] font-medium text-muted-foreground uppercase">รายได้รวม</p>
+                <p className="text-[32px] font-bold text-emerald-700 dark:text-emerald-400">
                   <CurrencyDisplay amount={report.totalIncome} />
                 </p>
               </div>
@@ -181,8 +190,8 @@ export default function MonthlyPage() {
                 <TrendingDown className="h-5 w-5 text-rose-600 dark:text-rose-400" />
               </div>
               <div className="space-y-1">
-                <p className="text-[14px] font-medium text-muted-foreground uppercase tracking-tight">รายจ่ายรวม</p>
-                <p className="text-[32px] font-bold tracking-tight text-rose-700 dark:text-rose-400">
+                <p className="text-[14px] font-medium text-muted-foreground uppercase">รายจ่ายรวม</p>
+                <p className="text-[32px] font-bold text-rose-700 dark:text-rose-400">
                   <CurrencyDisplay amount={report.totalExpense} />
                 </p>
               </div>
@@ -193,8 +202,8 @@ export default function MonthlyPage() {
                 <DollarSign className={`h-5 w-5 ${report.profit >= 0 ? 'text-apple-blue' : 'text-rose-600'}`} />
               </div>
               <div className="space-y-1">
-                <p className="text-[14px] font-medium text-muted-foreground uppercase tracking-tight">กำไรสุทธิ</p>
-                <p className={`text-[32px] font-bold tracking-tight ${report.profit >= 0 ? 'text-apple-blue dark:text-bright-blue' : 'text-rose-600'}`}>
+                <p className="text-[14px] font-medium text-muted-foreground uppercase">กำไรสุทธิ</p>
+                <p className={`text-[32px] font-bold ${report.profit >= 0 ? 'text-apple-blue dark:text-bright-blue' : 'text-rose-600'}`}>
                   <CurrencyDisplay amount={report.profit} showSign />
                 </p>
               </div>
@@ -204,15 +213,24 @@ export default function MonthlyPage() {
 
       {/* Chart Section */}
       <section className="space-y-4">
-        <h2 className="text-[21px] font-semibold tracking-tight">สรุปรายวัน</h2>
+        <h2 className="text-[21px] font-semibold">สรุปรายวัน</h2>
         <div className="apple-card p-6 pt-10 border border-border/30">
           {isLoading ? (
-            <div className="h-64 flex items-center justify-center bg-light-gray/20 rounded-xl animate-pulse">
-              <LoadingSpinner />
+            <div className="h-64 rounded-xl bg-light-gray/20 p-4 dark:bg-near-black/40">
+              <div className="flex h-full animate-pulse items-end gap-2">
+                {Array.from({ length: 14 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex-1 rounded-t-md bg-muted"
+                    style={{ height: `${32 + (index % 5) * 12}%` }}
+                  />
+                ))}
+              </div>
             </div>
           ) : chartData.some((d) => d.income > 0 || d.expense > 0) ? (
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <CartesianGrid vertical={false} stroke="currentColor" opacity={0.08} />
                 <XAxis
                   dataKey="date"
                   axisLine={false}
@@ -229,7 +247,7 @@ export default function MonthlyPage() {
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="glass p-3 rounded-lg border border-border/50 shadow-xl">
+                        <div className="glass apple-card p-3 rounded-lg border border-border/50 shadow-xl">
                           <p className="text-[12px] font-bold text-muted-foreground uppercase mb-2">วันที่ {payload[0].payload.date}</p>
                           <div className="space-y-1">
                             {payload.map((entry, idx) => (
@@ -247,14 +265,14 @@ export default function MonthlyPage() {
                 />
                 <Bar
                   dataKey="income"
-                  fill="#059669"
+                  fill="#34d399"
                   radius={[4, 4, 4, 4]}
                   name="รายได้"
                   barSize={12}
                 />
                 <Bar
                   dataKey="expense"
-                  fill="#e11d48"
+                  fill="#fb7185"
                   radius={[4, 4, 4, 4]}
                   name="รายจ่าย"
                   barSize={12}
@@ -262,9 +280,10 @@ export default function MonthlyPage() {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="text-center py-20 text-muted-foreground border border-dashed border-border/50 rounded-xl">
-              <div className="text-5xl mb-4">📊</div>
-              <p className="text-[17px] font-medium">ไม่มีข้อมูลสำหรับเดือนนี้</p>
+            <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/50 py-20 text-center text-muted-foreground">
+              <BarChart3 className="h-12 w-12 rounded-full bg-apple-blue/10 p-3 text-apple-blue" />
+              <p className="text-[21px] font-bold text-foreground">ไม่มีข้อมูลสำหรับเดือนนี้</p>
+              <p className="text-[17px] font-medium">เริ่มบันทึกรายการแรกเพื่อดูกราฟรายวัน</p>
             </div>
           )}
         </div>
@@ -275,7 +294,7 @@ export default function MonthlyPage() {
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
            {/* Income Categories */}
            <div className="space-y-4">
-              <h3 className="text-[17px] font-bold tracking-tight uppercase text-muted-foreground">รายได้แยกตามหมวดหมู่</h3>
+              <h3 className="text-[17px] font-bold uppercase text-muted-foreground">รายได้แยกตามหมวดหมู่</h3>
               <div className="space-y-4">
                 {incomeCategories.map((cat) => {
                    const category = categoryMetaById[cat.category];
@@ -308,7 +327,7 @@ export default function MonthlyPage() {
 
            {/* Expense Categories */}
            <div className="space-y-4">
-              <h3 className="text-[17px] font-bold tracking-tight uppercase text-muted-foreground">ค่าใช้จ่ายแยกตามหมวดหมู่</h3>
+              <h3 className="text-[17px] font-bold uppercase text-muted-foreground">ค่าใช้จ่ายแยกตามหมวดหมู่</h3>
               <div className="space-y-4">
                 {expenseCategories.map((cat) => {
                    const category = categoryMetaById[cat.category];
@@ -344,24 +363,24 @@ export default function MonthlyPage() {
       {/* Analysis Section */}
       {!isLoading && report && (report.totalIncome > 0 || report.totalExpense > 0) && (
         <section className="space-y-4">
-          <h2 className="text-[21px] font-semibold tracking-tight">วิเคราะห์เดือนนี้</h2>
+          <h2 className="text-[21px] font-semibold">วิเคราะห์เดือนนี้</h2>
           <div className="apple-card p-8 bg-apple-blue dark:bg-near-black text-white space-y-6">
              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-1">
                    <p className="text-[14px] font-bold uppercase tracking-widest text-white/60">กำไรสุทธิ</p>
-                   <p className="text-[32px] font-bold tracking-tight">
+                   <p className="text-[32px] font-bold">
                      {report.profitMargin}% <span className="text-[17px] font-medium text-white/70">ของรายได้</span>
                    </p>
                 </div>
                 <div className="space-y-1">
                    <p className="text-[14px] font-bold uppercase tracking-widest text-white/60">รายได้เฉลี่ยรายวัน</p>
-                   <p className="text-[32px] font-bold tracking-tight">
+                   <p className="text-[32px] font-bold">
                      <CurrencyDisplay amount={report.averageDailyIncome} />
                    </p>
                 </div>
                 <div className="space-y-1">
                    <p className="text-[14px] font-bold uppercase tracking-widest text-white/60">กำไรเฉลี่ยรายวัน</p>
-                   <p className="text-[32px] font-bold tracking-tight">
+                   <p className="text-[32px] font-bold">
                      <CurrencyDisplay amount={report.averageDailyProfit} />
                    </p>
                 </div>
@@ -377,6 +396,6 @@ export default function MonthlyPage() {
           </div>
         </section>
       )}
-    </div>
+    </motion.div>
   );
 }

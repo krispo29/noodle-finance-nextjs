@@ -38,8 +38,8 @@
   --color-border: var(--border);
 
   /* Fonts (Apple-inspired) */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Sarabun', 'Prompt', sans-serif;
-  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', 'Prompt', sans-serif;
+  --font-sans: var(--font-sarabun), -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  --font-display: var(--font-prompt), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
 
   /* Corner radius (Apple scale) */
   --radius-xs: 5px;
@@ -96,13 +96,13 @@
     font-size: 17px;
     font-weight: 400;
     line-height: 1.47;
-    letter-spacing: -0.374px;
+    letter-spacing: 0;
     -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
-    letter-spacing: -0.28px;
+    letter-spacing: 0;
   }
 
   /* Safe area for iPhone notch */

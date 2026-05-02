@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, Check, Loader2 } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import { format } from 'date-fns';
 import type { z } from 'zod';
 import { addTransaction } from '@/app/actions/transactions';
@@ -24,13 +24,13 @@ type TransactionFormData = z.infer<typeof transactionSchema>;
 
 const toneClasses = {
   emerald: {
-    selected: 'bg-emerald-600 text-white shadow-lg',
-    button: 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800',
+    selected: 'bg-emerald-50 text-emerald-700 shadow-lg dark:bg-emerald-950/30 dark:text-emerald-400',
+    button: 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 active:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400',
     badge: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
   },
   rose: {
-    selected: 'bg-rose-600 text-white shadow-lg',
-    button: 'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800',
+    selected: 'bg-rose-50 text-rose-700 shadow-lg dark:bg-rose-950/30 dark:text-rose-400',
+    button: 'bg-rose-50 text-rose-700 hover:bg-rose-100 active:bg-rose-100 dark:bg-rose-950/30 dark:text-rose-400',
     badge: 'bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300',
   },
   amber: {
@@ -162,7 +162,7 @@ export default function AddPage() {
           >
             <Check className="h-12 w-12 text-apple-blue" />
           </motion.div>
-          <h2 className="mb-2 text-[32px] font-bold tracking-tight text-foreground leading-tight">
+          <h2 className="mb-2 text-[32px] font-bold text-foreground leading-tight">
             บันทึกเรียบร้อย
           </h2>
           <p className="text-[17px] text-muted-foreground font-medium">กำลังพาคุณกลับไปที่หน้าหลัก</p>
@@ -172,17 +172,24 @@ export default function AddPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-12 pb-32 pt-8 px-4 md:px-8">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mx-auto max-w-2xl space-y-12 pb-32 pt-8 px-4 md:px-8"
+    >
       {/* Navigation Header */}
       <section className="space-y-4">
-        <button
+        <motion.button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-apple-blue font-semibold text-[17px] hover:underline"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+          className="flex min-h-[44px] items-center gap-2 text-apple-blue font-semibold text-[17px] hover:underline"
         >
           <ArrowLeft className="h-5 w-5" />
           ย้อนกลับ
-        </button>
-        <h1 className="text-[40px] font-semibold tracking-tight leading-tight text-foreground">
+        </motion.button>
+        <h1 className="text-[40px] font-semibold leading-tight text-foreground">
           บันทึกรายการ
         </h1>
         <p className="text-[21px] text-muted-foreground font-medium">
@@ -201,10 +208,13 @@ export default function AddPage() {
               const typeTone = toneClasses[type.tone];
 
               return (
-                <button
+                <motion.button
                   key={type.id}
                   type="button"
                   onClick={() => onSelectType(type.id)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                   className={`apple-card p-4 text-left border border-border/30 transition-all ${
                     isSelected ? typeTone.selected : 'hover:bg-light-gray dark:hover:bg-near-black'
                   }`}
@@ -214,13 +224,13 @@ export default function AddPage() {
                       <Icon className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="font-bold text-[17px] tracking-tight">{type.shortLabel}</p>
-                      <p className={`text-[12px] font-medium tracking-tight ${isSelected ? 'text-white/80' : 'text-muted-foreground'}`}>
+                      <p className="font-bold text-[17px]">{type.shortLabel}</p>
+                      <p className={`text-[12px] font-medium ${isSelected ? 'text-current/80' : 'text-muted-foreground'}`}>
                         {type.label}
                       </p>
                     </div>
                   </div>
-                </button>
+                </motion.button>
               );
             })}
           </div>
@@ -247,12 +257,14 @@ export default function AddPage() {
                     key={category.id}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.03 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17, delay: index * 0.03 }}
                     type="button"
                     onClick={() => {
                       setSelectedCategory(category.id);
                       setValue('category', category.id);
                     }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
                     className={`apple-card p-4 flex items-center gap-3 border border-border/30 transition-all ${
                       isSelected ? activeTone.selected : 'hover:bg-light-gray dark:hover:bg-near-black'
                     }`}
@@ -282,7 +294,7 @@ export default function AddPage() {
               {...register('amount', { valueAsNumber: true })}
               placeholder="0"
               disabled={isSubmitting}
-              className={`w-full bg-light-gray dark:bg-near-black border-none rounded-2xl py-8 pl-14 pr-6 text-[48px] font-bold tracking-tighter text-foreground focus:ring-4 focus:ring-apple-blue/20 transition-all outline-none ${
+              className={`w-full bg-light-gray dark:bg-near-black border-none rounded-2xl py-8 pl-14 pr-6 text-[48px] font-bold tabular-nums text-foreground focus:ring-4 focus:ring-apple-blue/20 transition-all outline-none ${
                 errors.amount ? 'ring-2 ring-rose-500' : ''
               }`}
             />
@@ -290,15 +302,18 @@ export default function AddPage() {
           
           <div className="grid grid-cols-4 gap-2">
             {quickAmounts.map((amount) => (
-              <button
+              <motion.button
                 key={amount}
                 type="button"
                 onClick={() => setValue('amount', (watchedAmount || 0) + amount)}
                 disabled={isSubmitting}
-                className="py-3 px-2 rounded-lg bg-light-gray dark:bg-near-black text-[14px] font-bold hover:bg-border/30 transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                className="min-h-[44px] rounded-lg bg-light-gray px-2 py-3 text-[14px] font-bold tabular-nums transition-colors hover:bg-border/30 dark:bg-near-black"
               >
                 +{amount.toLocaleString()}
-              </button>
+              </motion.button>
             ))}
           </div>
           {errors.amount && (
@@ -323,7 +338,7 @@ export default function AddPage() {
             <input
               type="date"
               {...register('transactionDate')}
-              className="w-full apple-card bg-light-gray dark:bg-near-black border-none focus:ring-2 focus:ring-apple-blue outline-none p-4 font-medium text-[17px]"
+              className="w-full apple-card bg-light-gray dark:bg-near-black border-none focus:ring-2 focus:ring-apple-blue outline-none p-4 font-medium text-[17px] tabular-nums"
             />
           </section>
         </div>
@@ -334,18 +349,21 @@ export default function AddPage() {
           </div>
         )}
 
-        <button
+        <motion.button
           type="submit"
           disabled={isSubmitting || !watchedAmount || !watchedCategory}
-          className={`w-full py-5 rounded-2xl text-[21px] font-bold tracking-tight transition-all shadow-xl ${
+          whileHover={isSubmitting || !watchedAmount || !watchedCategory ? undefined : { scale: 1.02 }}
+          whileTap={isSubmitting || !watchedAmount || !watchedCategory ? undefined : { scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+          className={`w-full min-h-[56px] rounded-2xl py-5 text-[21px] font-bold transition-all shadow-xl ${
             isSubmitting || !watchedAmount || !watchedCategory
               ? 'bg-muted text-muted-foreground cursor-not-allowed opacity-50'
-              : `${activeTone.button} hover:scale-[1.02] active:scale-[0.98]`
+              : activeTone.button
           }`}
         >
           {isSubmitting ? 'กำลังบันทึก...' : 'บันทึกรายการ'}
-        </button>
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 }

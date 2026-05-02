@@ -20,7 +20,7 @@ export default function CurrencyDisplay({
   const isPositive = amount >= 0;
 
   return (
-    <span className={className}>
+    <span className={`tabular-nums ${className}`}>
       {showSign && (
         <span className="text-current">
           {isPositive ? '+' : '-'}

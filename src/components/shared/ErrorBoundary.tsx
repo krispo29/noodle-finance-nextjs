@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { AlertTriangle } from 'lucide-react';
 
 interface ErrorBoundaryState {
@@ -43,12 +44,15 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
               โหลดข้อมูลไม่ได้ ลองใหม่อีกครั้ง
             </p>
           </div>
-          <button
+          <motion.button
             onClick={() => this.setState({ hasError: false })}
-            className="px-4 py-2 bg-brand-600 text-white rounded-md hover:bg-brand-700 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+            className="btn-primary min-h-[44px] rounded-lg px-4"
           >
             ลองอีกครั้ง
-          </button>
+          </motion.button>
         </div>
       );
     }

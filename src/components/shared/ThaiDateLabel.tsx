@@ -45,7 +45,7 @@ export default function ThaiDateLabel({
     variant === 'full' ? formatThaiDateFull(finalDate) : formatThaiDate(finalDate);
 
   return (
-    <time dateTime={toDateTimeString(finalDate)} className={className}>
+    <time dateTime={toDateTimeString(finalDate)} className={`tabular-nums ${className}`}>
       {formatted}
     </time>
   );

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -45,10 +45,10 @@ export default function Sidebar() {
             />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-foreground tracking-tight truncate">
+            <p className="font-semibold text-foreground truncate">
               {user?.shopName || 'ร้านก๋วยเตี๋ยว'}
             </p>
-            <p className="text-[12px] text-muted-foreground font-medium tracking-tight truncate">
+            <p className="text-[12px] text-muted-foreground font-medium truncate">
               บัญชีร้านก๋วยเตี๋ยว
             </p>
           </div>
@@ -68,35 +68,42 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className="relative flex items-center gap-3 px-4 py-3 rounded-sm transition-all touch-target group"
+              className="group relative block rounded-sm"
             >
-              {isActive && (
-                <motion.div
-                  layoutId="sidebarActive"
-                  className="absolute inset-0 bg-light-gray dark:bg-near-black rounded-sm"
-                  transition={{
-                    type: 'spring',
-                    stiffness: 500,
-                    damping: 35,
-                  }}
-                />
-              )}
-              <Icon
-                className={`w-5 h-5 flex-shrink-0 relative z-10 transition-colors ${
-                  isActive
-                    ? 'text-apple-blue dark:text-bright-blue'
-                    : 'text-muted-foreground group-hover:text-foreground'
-                }`}
-              />
-              <span
-                className={`font-medium relative z-10 transition-colors tracking-tight ${
-                  isActive
-                    ? 'text-foreground'
-                    : 'text-muted-foreground group-hover:text-foreground'
-                }`}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                className="relative flex min-h-[44px] items-center gap-3 px-4 py-3 rounded-sm transition-all"
               >
-                {item.label}
-              </span>
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebarActive"
+                    className="absolute inset-0 bg-light-gray dark:bg-near-black rounded-sm"
+                    transition={{
+                      type: 'spring',
+                      stiffness: 500,
+                      damping: 35,
+                    }}
+                  />
+                )}
+                <Icon
+                  className={`w-5 h-5 flex-shrink-0 relative z-10 transition-colors ${
+                    isActive
+                      ? 'text-apple-blue dark:text-bright-blue'
+                      : 'text-muted-foreground group-hover:text-foreground'
+                  }`}
+                />
+                <span
+                  className={`font-medium relative z-10 transition-colors ${
+                    isActive
+                      ? 'text-foreground'
+                      : 'text-muted-foreground group-hover:text-foreground'
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </motion.div>
             </Link>
           );
         })}
@@ -104,13 +111,16 @@ export default function Sidebar() {
 
       {/* Footer */}
       <div className="p-4 border-t border-border/30">
-        <button
+        <motion.button
           onClick={logout}
-          className="flex items-center gap-3 w-full px-4 py-3 rounded-sm text-muted-foreground hover:bg-near-black/5 dark:hover:bg-white/5 transition-all touch-target group"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+          className="group flex min-h-[44px] w-full items-center gap-3 rounded-sm px-4 py-3 text-muted-foreground transition-all hover:bg-near-black/5 dark:hover:bg-white/5"
         >
           <LogOut className="w-5 h-5 flex-shrink-0 group-hover:text-foreground transition-colors" />
-          <span className="font-medium tracking-tight">ออกจากระบบ</span>
-        </button>
+          <span className="font-medium">ออกจากระบบ</span>
+        </motion.button>
       </div>
     </aside>
   );

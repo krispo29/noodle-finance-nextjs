@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -16,16 +16,21 @@ export default function ProfilePage() {
       await logout();
     }
   };
+  const springTap = { type: 'spring', stiffness: 400, damping: 17 } as const;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-12 pb-32 pt-8 px-4 md:px-8">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mx-auto max-w-4xl space-y-12 pb-32 pt-8 px-4 md:px-8"
+    >
       {/* Header Section */}
       <section className="space-y-2">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[12px] font-semibold text-muted-foreground uppercase tracking-widest">Account Settings</span>
           <ThemeToggle />
         </div>
-        <h1 className="text-[40px] md:text-[56px] font-semibold tracking-tight leading-tight text-foreground">
+        <h1 className="text-[40px] md:text-[56px] font-semibold leading-tight text-foreground">
           โปรไฟล์
         </h1>
         <p className="text-[21px] text-muted-foreground font-medium max-w-lg leading-snug">
@@ -44,29 +49,36 @@ export default function ProfilePage() {
           <User className="h-12 w-12" />
         </div>
         <div className="text-center md:text-left space-y-1">
-          <h2 className="text-[32px] font-bold tracking-tight text-foreground leading-tight">
+          <h2 className="text-[32px] font-bold text-foreground leading-tight">
             {user?.shopName || 'ก๋วยเตี๋ยวรสเด็ด'}
           </h2>
-          <p className="text-[17px] text-muted-foreground font-medium uppercase tracking-tight">บัญชีเจ้าของร้าน</p>
+          <p className="text-[17px] text-muted-foreground font-medium uppercase">บัญชีเจ้าของร้าน</p>
         </div>
       </motion.div>
 
       <Link
         href="/profile/categories"
-        className="apple-card flex items-center justify-between gap-4 bg-apple-blue text-white hover:opacity-95"
+        className="block"
       >
-        <div className="space-y-1">
-          <p className="text-[12px] font-semibold uppercase tracking-widest text-white/70">
-            Quick access
-          </p>
-          <p className="text-[24px] font-bold tracking-tight">จัดการหมวดหมู่รายการ</p>
-          <p className="text-[15px] font-medium text-white/80">
-            เพิ่ม แก้ไข ปิดใช้งาน หรือลบหมวดหมู่ได้จากหน้านี้
-          </p>
-        </div>
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white/15">
-          <Tags className="h-6 w-6" />
-        </div>
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={springTap}
+          className="apple-card flex items-center justify-between gap-4 bg-apple-blue text-white hover:opacity-95"
+        >
+          <div className="space-y-1">
+            <p className="text-[12px] font-semibold uppercase tracking-widest text-white/70">
+              Quick access
+            </p>
+            <p className="text-[24px] font-bold">จัดการหมวดหมู่รายการ</p>
+            <p className="text-[15px] font-medium text-white/80">
+              เพิ่ม แก้ไข ปิดใช้งาน หรือลบหมวดหมู่ได้จากหน้านี้
+            </p>
+          </div>
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white/15">
+            <Tags className="h-6 w-6" />
+          </div>
+        </motion.div>
       </Link>
 
       {/* Options List */}
@@ -91,7 +103,12 @@ export default function ProfilePage() {
         <div className="space-y-4">
           <label className="text-[14px] font-semibold text-muted-foreground uppercase tracking-widest block">บัญชี</label>
           <div className="apple-card divide-y divide-border/20 border border-border/10 p-0 overflow-hidden">
-             <button className="flex w-full items-center justify-between px-6 py-4 hover:bg-light-gray/30 dark:hover:bg-near-black/30 transition-colors group">
+             <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={springTap}
+              className="group flex min-h-[44px] w-full items-center justify-between px-6 py-4 transition-colors hover:bg-light-gray/30 dark:hover:bg-near-black/30"
+             >
                 <div className="flex items-center gap-4">
                   <div className="p-2 rounded-lg bg-background border border-border/30">
                     <Store className="h-5 w-5" />
@@ -99,11 +116,17 @@ export default function ProfilePage() {
                   <span className="text-[17px] font-semibold">ข้อมูลร้านค้า</span>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-             </button>
+             </motion.button>
              <Link
               href="/profile/categories"
-              className="flex w-full items-center justify-between px-6 py-4 hover:bg-light-gray/30 dark:hover:bg-near-black/30 transition-colors group"
+              className="group block"
              >
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={springTap}
+                className="flex min-h-[44px] w-full items-center justify-between px-6 py-4 transition-colors hover:bg-light-gray/30 dark:hover:bg-near-black/30"
+              >
                 <div className="flex items-center gap-4">
                   <div className="p-2 rounded-lg bg-background border border-border/30">
                     <Tags className="h-5 w-5" />
@@ -111,8 +134,14 @@ export default function ProfilePage() {
                   <span className="text-[17px] font-semibold">จัดการหมวดหมู่</span>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+              </motion.div>
              </Link>
-             <button className="flex w-full items-center justify-between px-6 py-4 hover:bg-light-gray/30 dark:hover:bg-near-black/30 transition-colors group">
+             <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={springTap}
+              className="group flex min-h-[44px] w-full items-center justify-between px-6 py-4 transition-colors hover:bg-light-gray/30 dark:hover:bg-near-black/30"
+             >
                 <div className="flex items-center gap-4">
                   <div className="p-2 rounded-lg bg-background border border-border/30">
                     <Shield className="h-5 w-5" />
@@ -120,27 +149,30 @@ export default function ProfilePage() {
                   <span className="text-[17px] font-semibold">ความปลอดภัย</span>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-             </button>
+             </motion.button>
           </div>
         </div>
 
         {/* Danger Zone */}
         <div className="pt-6">
-           <button
+           <motion.button
             onClick={handleLogout}
-            className="w-full apple-card bg-rose-50 dark:bg-rose-900/10 hover:bg-rose-100 dark:hover:bg-rose-900/20 text-rose-600 font-bold text-[17px] flex items-center justify-center gap-3 transition-all border border-rose-200 dark:border-rose-900/30"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            transition={springTap}
+            className="w-full apple-card min-h-[44px] bg-rose-50 dark:bg-rose-900/10 hover:bg-rose-100 dark:hover:bg-rose-900/20 text-rose-600 font-bold text-[17px] flex items-center justify-center gap-3 transition-all border border-rose-200 dark:border-rose-900/30"
           >
             <LogOut className="h-5 w-5" />
             ออกจากระบบ
-          </button>
+          </motion.button>
         </div>
       </section>
 
       {/* Version Info */}
       <footer className="text-center pt-12">
-        <p className="text-[14px] font-semibold text-muted-foreground tracking-tight uppercase">Noodle Finance v1.0.0</p>
-        <p className="text-[12px] text-muted-foreground/60 mt-1 font-medium">Made with 🍜 for Street Food Heroes</p>
+        <p className="text-[14px] font-semibold text-muted-foreground uppercase">Noodle Finance v1.0.0</p>
+        <p className="text-[12px] text-muted-foreground/60 mt-1 font-medium">Built for Street Food Heroes</p>
       </footer>
-    </div>
+    </motion.div>
   );
 }

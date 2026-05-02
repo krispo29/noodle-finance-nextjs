@@ -1,9 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Check, Pencil, Plus, Trash2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Check, Pencil, Plus, Tags, Trash2 } from 'lucide-react';
 import {
   createTransactionCategory,
   deleteTransactionCategory,
@@ -45,6 +46,8 @@ const defaultDraft: CategoryDraft = {
   iconName: 'Receipt',
   isActive: true,
 };
+
+const springTap = { type: 'spring', stiffness: 400, damping: 17 } as const;
 
 export default function CategoriesPage() {
   const queryClient = useQueryClient();
@@ -155,12 +158,23 @@ export default function CategoriesPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl space-y-10 px-4 pb-32 pt-8 md:px-8">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mx-auto max-w-5xl space-y-10 px-4 pb-32 pt-8 md:px-8"
+    >
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <Link href="/profile" className="flex items-center gap-2 text-[17px] font-semibold text-apple-blue">
-            <ArrowLeft className="h-5 w-5" />
-            กลับ
+          <Link href="/profile">
+            <motion.span
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={springTap}
+              className="flex min-h-[44px] items-center gap-2 text-[17px] font-semibold text-apple-blue"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              กลับ
+            </motion.span>
           </Link>
           <ThemeToggle />
         </div>
@@ -168,7 +182,7 @@ export default function CategoriesPage() {
           <p className="text-[12px] font-semibold uppercase tracking-widest text-muted-foreground">
             Category settings
           </p>
-          <h1 className="text-[40px] font-semibold leading-[1.07] tracking-tight text-foreground md:text-[56px]">
+          <h1 className="text-[40px] font-semibold leading-[1.07] text-foreground md:text-[56px]">
             จัดการหมวดหมู่รายการ
           </h1>
           <p className="max-w-2xl text-[21px] font-medium leading-snug text-muted-foreground">
@@ -183,11 +197,14 @@ export default function CategoriesPage() {
             const Icon = type.icon;
             const isActive = activeType === type.id;
             return (
-              <button
+              <motion.button
                 key={type.id}
                 type="button"
                 onClick={() => setActiveType(type.id)}
-                className={`flex min-h-11 items-center gap-2 whitespace-nowrap rounded-lg px-4 py-2 text-[15px] font-semibold transition-all ${
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={springTap}
+                className={`flex min-h-[44px] items-center gap-2 whitespace-nowrap rounded-lg px-4 py-2 text-[15px] font-semibold transition-all ${
                   isActive
                     ? typeBadgeClasses[type.id]
                     : 'bg-light-gray text-muted-foreground hover:bg-border/30 dark:bg-near-black'
@@ -195,7 +212,7 @@ export default function CategoriesPage() {
               >
                 <Icon className="h-4 w-4" />
                 {type.shortLabel}
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -225,15 +242,18 @@ export default function CategoriesPage() {
                 </option>
               ))}
             </select>
-            <button
+            <motion.button
               type="button"
               onClick={handleCreateCategory}
               disabled={isSaving || newCategory.label.trim().length === 0}
-              className="btn-primary min-h-11 rounded-lg px-5 disabled:opacity-50"
+              whileHover={isSaving || newCategory.label.trim().length === 0 ? undefined : { scale: 1.02 }}
+              whileTap={isSaving || newCategory.label.trim().length === 0 ? undefined : { scale: 0.97 }}
+              transition={springTap}
+              className="btn-primary min-h-[44px] rounded-lg px-5 disabled:opacity-50"
             >
               <Plus className="mr-2 h-4 w-4" />
               เพิ่ม
-            </button>
+            </motion.button>
           </div>
           {message && <p className="text-[14px] font-semibold text-muted-foreground">{message}</p>}
         </div>
@@ -241,9 +261,17 @@ export default function CategoriesPage() {
 
       <section className="space-y-4">
         {isLoading ? (
-          <div className="apple-card py-16 text-center text-muted-foreground">กำลังโหลดหมวดหมู่...</div>
+          <div className="apple-card space-y-4 p-6">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="h-20 animate-pulse rounded-lg bg-muted" />
+            ))}
+          </div>
         ) : categoriesByType[activeType].length === 0 ? (
-          <div className="apple-card py-16 text-center text-muted-foreground">ยังไม่มีหมวดหมู่ในประเภทนี้</div>
+          <div className="apple-card flex flex-col items-center justify-center gap-3 border border-dashed border-border/50 py-16 text-center text-muted-foreground">
+            <Tags className="h-12 w-12 rounded-full bg-apple-blue/10 p-3 text-apple-blue" />
+            <p className="text-[21px] font-bold text-foreground">ยังไม่มีหมวดหมู่ในประเภทนี้</p>
+            <p className="text-[17px] font-medium">เพิ่มชื่อหมวดหมู่ด้านบนเพื่อเริ่มใช้งาน</p>
+          </div>
         ) : (
           categoriesByType[activeType].map((category) => {
             const Icon = getCategoryIcon(category.iconName);
@@ -286,7 +314,7 @@ export default function CategoriesPage() {
                         </div>
                       ) : (
                         <>
-                          <p className="truncate text-[17px] font-bold tracking-tight">{category.label}</p>
+                          <p className="truncate text-[17px] font-bold">{category.label}</p>
                           <p className="text-[12px] font-semibold text-muted-foreground">
                             {category.isDefault ? 'หมวดเริ่มต้น' : 'หมวดที่สร้างเอง'} · ใช้แล้ว{' '}
                             {category.transactionCount} รายการ · {category.isActive ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}
@@ -299,48 +327,63 @@ export default function CategoriesPage() {
                   <div className="flex flex-wrap gap-2">
                     {isEditing ? (
                       <>
-                        <button
+                        <motion.button
                           type="button"
                           onClick={() => handleUpdateCategory(category)}
                           disabled={isSaving || editDraft.label.trim().length === 0}
-                          className="btn-primary min-h-11 rounded-lg px-4 disabled:opacity-50"
+                          whileHover={isSaving || editDraft.label.trim().length === 0 ? undefined : { scale: 1.02 }}
+                          whileTap={isSaving || editDraft.label.trim().length === 0 ? undefined : { scale: 0.97 }}
+                          transition={springTap}
+                          className="btn-primary min-h-[44px] rounded-lg px-4 disabled:opacity-50"
                         >
                           <Check className="mr-2 h-4 w-4" />
                           บันทึก
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
                           type="button"
                           onClick={() => setEditingId(null)}
-                          className="btn-outline min-h-11 rounded-lg px-4"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
+                          transition={springTap}
+                          className="btn-outline min-h-[44px] rounded-lg px-4"
                         >
                           ยกเลิก
-                        </button>
+                        </motion.button>
                       </>
                     ) : (
                       <>
-                        <button
+                        <motion.button
                           type="button"
                           onClick={() => startEditing(category)}
-                          className="btn-outline min-h-11 rounded-lg px-4"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
+                          transition={springTap}
+                          className="btn-outline min-h-[44px] rounded-lg px-4"
                         >
                           <Pencil className="mr-2 h-4 w-4" />
                           แก้ไข
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
                           type="button"
                           onClick={() => handleToggleActive(category)}
-                          className="min-h-11 rounded-lg bg-light-gray px-4 text-[15px] font-semibold text-foreground transition-colors hover:bg-border/30 dark:bg-near-black"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
+                          transition={springTap}
+                          className="min-h-[44px] rounded-lg bg-light-gray px-4 text-[15px] font-semibold text-foreground transition-colors hover:bg-border/30 dark:bg-near-black"
                         >
                           {category.isActive ? 'ปิดใช้งาน' : 'เปิดใช้งาน'}
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
                           type="button"
                           onClick={() => handleDeleteCategory(category)}
-                          className="min-h-11 rounded-lg bg-rose-50 px-4 text-[15px] font-semibold text-rose-700 transition-colors hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-300"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
+                          transition={springTap}
+                          className="min-h-[44px] rounded-lg bg-rose-50 px-4 text-[15px] font-semibold text-rose-700 transition-colors hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-300"
                         >
                           <Trash2 className="mr-2 inline h-4 w-4" />
                           ลบ
-                        </button>
+                        </motion.button>
                       </>
                     )}
                   </div>
@@ -350,6 +393,6 @@ export default function CategoriesPage() {
           })
         )}
       </section>
-    </div>
+    </motion.div>
   );
 }

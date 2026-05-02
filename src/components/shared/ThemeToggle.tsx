@@ -18,15 +18,18 @@ export default function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return <div className="w-10 h-10" />;
+    return <div className="min-h-[44px] min-w-[44px]" />;
   }
 
   const isDark = theme === 'dark';
 
   return (
-    <button
+    <motion.button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="relative w-10 h-10 rounded-lg hover:bg-white/10 transition-colors touch-target flex items-center justify-center"
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+      className="relative flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg transition-colors hover:bg-white/10"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       <motion.div
@@ -47,6 +50,6 @@ export default function ThemeToggle() {
           <Sun className="w-5 h-5 text-yellow-300" />
         )}
       </motion.div>
-    </button>
+    </motion.button>
   );
 }
